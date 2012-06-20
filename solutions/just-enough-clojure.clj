@@ -107,6 +107,9 @@
        (= (take (count candidate) seq)
           candidate)))
 
+;;; Exercise 7:
+
+
 (def tails
      (fn [seq]
        (map drop
