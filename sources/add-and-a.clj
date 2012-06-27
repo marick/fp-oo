@@ -1,12 +1,12 @@
-(def point {:x 1, :y 2})
+(def point {:x 1, :y 2, :__class_symbol__ 'Point})
 
 (def Point
      (fn [x y]
        {:x x,
         :y y
-        :class 'Point}))
+        :__class_symbol__ 'Point}))
 
-(def shifted
+(def shift
      (fn [this xinc yinc]
        (Point (+ (:x this) xinc)
               (+ (:y this) yinc))))
@@ -14,7 +14,7 @@
 (def Triangle
      (fn [point1 point2 point3]
        {:point1 point1, :point2 point2, :point3 point3
-        :class 'Triangle}))
+        :__class_symbol__ 'Triangle}))
 
 
 (def right-triangle (Triangle (Point 0 0)
