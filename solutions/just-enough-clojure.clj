@@ -116,4 +116,28 @@
             (range (inc (count seq)))
             (replicate (inc (count seq)) seq))))
 
+;;; Exercise 8:
 
+;; user=> (def puzzle (fn [list] (list list)))
+;; user=> (puzzle '(1 2 3))
+;; java.lang.ClassCastException: clojure.lang.PersistentList cannot be cast to clojure.lang.IFn (NO_SOURCE_FILE:0)
+;;
+;; Translated into English, that result says that a list was seen
+;; where something that could behave as a function was expected.
+;;
+;; The substitution rule tells us explains it. The first substitution leads to this:
+;;
+;;   (  (fn [list] (list list)) (1 2 3)  )
+;; (The symbol `puzzle` is replaced by a function, and the quoted list is replaced
+;; by the list-that-was-quoted.
+;;
+;; Now the argument is substituted into the body of the function, yielding this:
+;;
+;;   ((1 2 3) (1 2 3))
+;;
+;; The list (1 2 3) does not behave as a function. Boom!
+;;
+;; It's safest practice to avoid using the names of core functions for
+;; parameters. In this book, I'll often do it, though, purely for
+;; aesthetic reasons: I hate parameters like 'lst' or 'klass', and the
+;; code is well-tested enough that I can indulge in aesthetics.
