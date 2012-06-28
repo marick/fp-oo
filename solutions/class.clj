@@ -15,7 +15,7 @@
 
 (def a
      (fn [class & args]
-       (let [seeded {:__class_symbol__ (:__symbol__ class)}]
+       (let [seeded {:__class_symbol__ (:__own_symbol__ class)}]
          (apply-message-to class seeded :add-instance-values args))))
 
 (def send-to
@@ -31,7 +31,7 @@
 
 (def Point
 {
-  :__symbol__ 'Point
+  :__own_symbol__ 'Point
   :__instance_methods__
   {
     :add-instance-values (fn [this x y]
@@ -60,7 +60,7 @@
 
 (def Point
 {
-  :__symbol__ 'Point
+  :__own_symbol__ 'Point
   :__instance_methods__
   {
     :add-instance-values (fn [this x y]

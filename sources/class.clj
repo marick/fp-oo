@@ -1,6 +1,6 @@
 (def a
      (fn [class & args]
-       (let [seeded {:__class_symbol__ (:__symbol__ class)}
+       (let [seeded {:__class_symbol__ (:__own_symbol__ class)}
              constructor  (:add-instance-values (:__instance_methods__ class))]
          (apply constructor seeded args))))
 
@@ -13,7 +13,7 @@
 
 (def Point
 {
-  :__symbol__ 'Point
+  :__own_symbol__ 'Point
   :__instance_methods__
   {
     :add-instance-values (fn [this x y]
@@ -32,7 +32,7 @@
 ;; For exercise 4
 (def Holder  
 {
-  :__symbol__ 'Holder
+  :__own_symbol__ 'Holder
   :__instance_methods__
   {
     :add-instance-values (fn [this held]
