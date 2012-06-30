@@ -51,6 +51,8 @@
   :__superclass_symbol__ 'Anything
   :__instance_methods__
   {
+    :x :x
+    :y :y 
     :add-instance-values (fn [this x y]
                            (assoc this :x x :y y))
     :shift (fn [this xinc yinc]
