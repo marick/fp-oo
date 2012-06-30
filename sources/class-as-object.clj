@@ -100,10 +100,7 @@
 
 (def apply-message-to
      (fn [class instance message args]
-       (prn class instance message args)
        (let [method (message (method-cache class))]
-         (prn :method-cache (method-cache class))
-         (prn :method method)
          (if method
            (apply method instance args)
            (send-to instance :method-missing message args)))))
