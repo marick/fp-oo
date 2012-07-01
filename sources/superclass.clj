@@ -39,14 +39,17 @@
 
 (def class-symbol-above
      (fn [class-symbol]
-        (:__superclass_symbol__ (eval class-symbol))))
+       (assert (symbol? class-symbol))
+       (:__superclass_symbol__ (eval class-symbol))))
 
 (def class-instance-methods
      (fn [class-symbol]
+       (assert (symbol? class-symbol))
        (:__instance_methods__ (eval class-symbol))))
 
 (def class-from-instance
      (fn [instance]
+       (assert (map? instance))
        (eval (:__class_symbol__ instance))))
 
 
@@ -79,8 +82,9 @@
 
 (def apply-message-to
      (fn [class instance message args]
-       (apply (message (method-cache class))
-              instance args)))
+       (let [class-symbol (:__own_symbol__ class)]
+         (apply (message (method-cache class-symbol))
+                instance args))))
 
 (def a
      (fn [class & args]
@@ -141,4 +145,40 @@
                                 (:y other)))
    }
  })
+
+
+;; These test classes can be used to experiment with
+;; :method-missing
+
+(def MissingOverrider
+{
+  :__own_symbol__ 'MissingOverrider
+  :__superclass_symbol__ 'Anything
+  :__instance_methods__
+  {
+   :method-missing
+   (fn [this message args]
+     (println (cl-format nil "method-missing called! ~A on ~A." message this))
+     (println (cl-format nil "The arguments were ~A." args)))
+  }
+ })
+
+;; Does a method-missing override work?
+;; (send-to (a MissingOverrider) :queen-bee "Dawn")
+
+
+(def SuperSender
+{
+  :__own_symbol__ 'SuperSender
+  :__superclass_symbol__ 'Anything
+  :__instance_methods__
+  {
+   :overrides-nothing
+   (fn [this]
+     (send-super this :overrides-nothing))
+  }
+ })
+
+;; Does method-missing get called when `send-super` is incorrectly used?
+;; (send-to (a SuperSender) :overrides-nothing)
 

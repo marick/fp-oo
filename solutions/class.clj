@@ -2,14 +2,18 @@
 
 (def method-from-message
      (fn [message class]
+       (assert (map? class))
        (message (:__instance_methods__ class))))
 
 (def class-from-instance
      (fn [instance]
+       (assert (map? instance))
        (eval (:__class_symbol__ instance))))
 
 (def apply-message-to
      (fn [class instance message args]
+       (assert (map? class))
+       (assert (map? instance))
        (apply (method-from-message message class)
               instance args)))
 
@@ -107,6 +111,8 @@
 
 (def apply-message-to
      (fn [class instance message args]
+       (assert (map? class))
+       (assert (map? instance))
        (let [method (or (method-from-message message class)
                         message)]
        (apply method instance args))))

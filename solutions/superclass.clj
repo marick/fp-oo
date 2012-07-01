@@ -14,8 +14,9 @@
 
 (def apply-message-to
      (fn [class instance message args]
-       (apply (message (method-cache class))
-              instance args)))
+       (let [class-symbol (:__own_symbol__ class)]
+         (apply (message (method-cache class-symbol))
+                instance args))))
 
 ;; If (message (method-cache class)) comes back nil, we *could* apply
 ;; a different method, looking up `method-missing` in the
@@ -23,7 +24,8 @@
 
 (def apply-message-to
      (fn [class instance message args]
-       (let [method-map (method-cache class)
+       (let [class-symbol (:__own_symbol__ class)
+             method-map (method-cache class-symbol)
              method (message method-map)]
          (if method
            (apply method instance args)
@@ -40,7 +42,8 @@
 
 (def apply-message-to
      (fn [class instance message args]
-       (let [method-map (method-cache class)
+       (let [class-symbol (:__own_symbol__ class)
+             method-map (method-cache class-symbol)
              method (message method-map)]
          (if method
            (apply method instance args)
@@ -55,45 +58,14 @@
 
 (def apply-message-to
      (fn [class instance message args]
-       (let [method (message (method-cache class))]
+       (let [class-symbol (:__own_symbol__ class)
+             method (message (method-cache class-symbol))]
          (if method
            (apply method instance args)
            (send-to instance :method-missing message args)))))
 
-;;; Some tests:
 
-;; Can a subclass override method-missing?
-;; (This also checks that the arguments are passed correctly.)
-
-(def MissingOverrider
-{
-  :__own_symbol__ 'MissingOverrider
-  :__superclass_symbol__ 'Anything
-  :__instance_methods__
-  {
-   :method-missing
-   (fn [this message args]
-     (prn "method-missing called! " message " on " this)
-     (prn "The arguments were " args))
-  }
- })
-
+;; Does a method-missing override work?
 (send-to (a MissingOverrider) :queen-bee "Dawn")
-
-
 ;; Does method-missing get called when `send-super` is incorrectly used?
-
-(def SuperSender
-{
-  :__own_symbol__ 'SuperSender
-  :__superclass_symbol__ 'Anything
-  :__instance_methods__
-  {
-   :overrides-nothing
-   (fn [this]
-     (send-super this :overrides-nothing))
-  }
- })
-
-
 (send-to (a SuperSender) :overrides-nothing)

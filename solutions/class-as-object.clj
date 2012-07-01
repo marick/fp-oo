@@ -8,22 +8,40 @@
   :__own_symbol__ 'MetaAnything
   :__instance_methods__
   {
+  }
+})
+
+(def MetaClasser
+{
+  :__own_symbol__ 'MetaClasser
+  :__instance_methods__
+  {
+  }
+})
+
+(def Classer
+{
+  :__own_symbol__ 'Classer
+  :__class_symbol__ 'MetaClasser
+  :__instance_methods__
+  {
    :new
    (fn [class & args]
      (let [seeded {:__class_symbol__ (:__own_symbol__ class)}]
        (apply-message-to class seeded :add-instance-values args)))
    }
- })
+})
+  
 
 (def MetaPoint
 {
   :__own_symbol__ 'MetaPoint
-  :__superclass_symbol__ 'MetaAnything
+  :__superclass_symbol__ 'Classer
   :__instance_methods__
   {
    :origin (fn [class] (send-to class :new 0 0))
    }
- })
+})
 
 
 (def Anything
@@ -65,59 +83,12 @@
  })
 
 
+(def print-and-add
+     (memoize
+      (fn [x y]
+        (let [result (+ x y)]
+          (println x "plus" y "is" result)
+          result))))
 
-;;; Here are methods that take a class-symbol or instance containing one and follow it somewhere. 
-
-(def class-symbol-above
-     (fn [class-symbol]
-        (:__superclass_symbol__ (eval class-symbol))))
-
-(def class-instance-methods
-     (fn [class-symbol]
-       (:__instance_methods__ (eval class-symbol))))
-
-(def class-from-instance
-     (fn [instance]
-       (eval (:__class_symbol__ instance))))
-
-
-
-;; Core dispatch function
-
-(def lineage-1
-     (fn [class-symbol so-far]
-       (if (nil? class-symbol)
-         so-far
-         (lineage-1 (class-symbol-above class-symbol)
-                    (cons class-symbol so-far)))))
-(def lineage
-     (fn [class-symbol]
-       (lineage-1 class-symbol [])))
-
-(def method-cache
-     (fn [class-symbol]
-       (let [method-maps (map class-instance-methods
-                              (lineage class-symbol))]
-         (apply merge method-maps))))
-
-(def apply-message-to
-     (fn [class instance message args]
-       (let [method (message (method-cache class))]
-         (if method
-           (apply method instance args)
-           (send-to instance :method-missing message args)))))
-
-
-;;; The public interface
-
-(def send-to
-     (fn [instance message & args]
-       (apply-message-to (class-from-instance instance)
-                         instance message args)))
-
-(def send-super
-     (fn [instance message & args]
-       (apply-message-to (class-symbol-above (class-from-instance instance))
-                         instance message args)))
 
 
