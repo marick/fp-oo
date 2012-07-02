@@ -79,7 +79,39 @@
     (send-to sub :sub-val) => 2
     (send-to sub :summer 3) => 6))
 
-(load-file "solutions/pieces/superclass-2.clj")
+(load-file "solutions/pieces/superclass-2a.clj")
+
+(fact
+  (apply-message-to Point (a Point 1 2) :class-name '()) => 'Point
+  (apply-message-to Point (a Point 1 2) :shift '(1 2)) => (a Point 2 4))
+
+(fact
+  (send-to (a Point 1 2) :add (a Point 2 1)) => (a Point 3 3)
+  (send-to (a Point 1 2) :class) => Point
+  (send-to (a Anything) :class) => Anything)
+
+
+(fact
+  (send-to (a MissingOverrider) :queen-bee "Dawn") => nil
+  (send-to (a SuperSender) :overrides-nothing) => (throws Error))
+
+(load-file "solutions/pieces/superclass-2b.clj")
+
+(fact
+  (apply-message-to Point (a Point 1 2) :class-name '()) => 'Point
+  (apply-message-to Point (a Point 1 2) :shift '(1 2)) => (a Point 2 4))
+
+(fact
+  (send-to (a Point 1 2) :add (a Point 2 1)) => (a Point 3 3)
+  (send-to (a Point 1 2) :class) => Point
+  (send-to (a Anything) :class) => Anything)
+
+
+(fact
+  (send-to (a MissingOverrider) :queen-bee "Dawn") => nil
+  (send-to (a SuperSender) :overrides-nothing) => (throws Error))
+
+(load-file "solutions/pieces/superclass-2c.clj")
 
 (fact
   (apply-message-to Point (a Point 1 2) :class-name '()) => 'Point

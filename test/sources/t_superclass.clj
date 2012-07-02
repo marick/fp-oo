@@ -18,9 +18,9 @@
   (lineage 'Point) => ['Anything 'Point])
 
 (fact
-  (:class (method-cache 'Point)) => (exactly (:class (class-instance-methods 'Anything)))
-  (:add (method-cache 'Point)) => (exactly (:add (class-instance-methods 'Point)))
-  (:add-instance-values (method-cache 'Point))
+  (:class (method-cache Point)) => (exactly (:class (class-instance-methods 'Anything)))
+  (:add (method-cache Point)) => (exactly (:add (class-instance-methods 'Point)))
+  (:add-instance-values (method-cache Point))
   => (exactly (:add-instance-values (class-instance-methods 'Point))))
 
 (fact

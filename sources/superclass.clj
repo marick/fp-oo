@@ -55,8 +55,9 @@
 (declare lineage)
 
 (def method-cache
-     (fn [class-symbol]
-       (let [method-maps (map class-instance-methods
+     (fn [class]
+       (let [class-symbol (:__own_symbol__ class)
+             method-maps (map class-instance-methods
                               (lineage class-symbol))]
          (apply merge method-maps))))
 
@@ -72,9 +73,8 @@
 
 (def apply-message-to
      (fn [class instance message args]
-       (let [class-symbol (:__own_symbol__ class)]
-         (apply (message (method-cache class-symbol))
-                instance args))))
+         (apply (message (method-cache class))
+                instance args)))
 
 (def a
      (fn [class & args]

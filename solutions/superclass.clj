@@ -20,9 +20,8 @@
 
 (def apply-message-to
      (fn [class instance message args]
-       (let [class-symbol (:__own_symbol__ class)]
-         (apply (message (method-cache class-symbol))
-                instance args))))
+       (apply (message (method-cache class))
+              instance args)))
 
 ;; If (message (method-cache class)) comes back nil, we *could* apply
 ;; a different method, looking up `method-missing` in the
@@ -30,8 +29,7 @@
 
 (def apply-message-to
      (fn [class instance message args]
-       (let [class-symbol (:__own_symbol__ class)
-             method-map (method-cache class-symbol)
+       (let [method-map (method-cache class)
              method (message method-map)]
          (if method
            (apply method instance args)
@@ -48,8 +46,7 @@
 
 (def apply-message-to
      (fn [class instance message args]
-       (let [class-symbol (:__own_symbol__ class)
-             method-map (method-cache class-symbol)
+       (let [method-map (method-cache class)
              method (message method-map)]
          (if method
            (apply method instance args)
@@ -64,8 +61,7 @@
 
 (def apply-message-to
      (fn [class instance message args]
-       (let [class-symbol (:__own_symbol__ class)
-             method (message (method-cache class-symbol))]
+       (let [method (message (method-cache class))]
          (if method
            (apply method instance args)
            (send-to instance :method-missing message args)))))
