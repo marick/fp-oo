@@ -4,16 +4,8 @@
      (fn [message class]
        (message (:__instance_methods__ class))))
 
-;; It's unfortunate that (eval 'Point) and (eval Point) evaluate to
-;; the same map, because that allowed me to get away with code that
-;; passed the latter instead of the former. That led to a
-;; hard-to-debug problem in one of the next chapter's solutions. To
-;; avoid that going forward, I'm putting an explicit type check on all
-;; the functions that `eval`.
-
 (def class-from-instance
      (fn [instance]
-       (assert (map? instance))
        (eval (:__class_symbol__ instance))))
 
 (def apply-message-to
