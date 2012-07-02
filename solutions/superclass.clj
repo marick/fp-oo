@@ -16,6 +16,11 @@
 
 ;;; Exercise 2
 
+(send-to (a SubClass 1 2) :summer 3)
+
+
+;;; Exercise 3
+
 ;; Here is the original:
 
 (def apply-message-to

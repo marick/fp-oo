@@ -1,4 +1,4 @@
-;;; Exercise 2
+;;; Exercise 3
 
 ;; Here is the original:
 
