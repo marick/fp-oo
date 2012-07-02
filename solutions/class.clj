@@ -1,5 +1,13 @@
 ;;; Exercise 1
 
+;; I've found that it's easy for me to mess up and pass classes (maps)
+;; to functions that want class-symbols. This can produce
+;; hard-to-debug failures. Even worse, it sometimes *doesn't* fail
+;; (mostly because maps are self-evaluating, so `(eval 'Point)` and
+;; `(eval Point)` produce the same result). But later changes can
+;; surface the bug in an even *more* confusing way. So I use Clojure's
+;; `assert` to check the type of select arguments.
+
 (def method-from-message
      (fn [message class]
        (assert (map? class))

@@ -52,7 +52,6 @@
        (assert (map? instance))
        (eval (:__class_symbol__ instance))))
 
-
 (declare lineage)
 
 (def method-cache
@@ -70,15 +69,6 @@
 (def lineage
      (fn [class-symbol]
        (lineage-1 class-symbol [])))
-
-;;; This is the version from last chapter:
-
-;; (def apply-message-to
-;;      (fn [class instance message args]
-;;        (apply (method-from-message message class)
-;;               instance args)))
-
-;; This chapter's version.
 
 (def apply-message-to
      (fn [class instance message args]
@@ -145,6 +135,7 @@
                                 (:y other)))
    }
  })
+
 
 
 ;; These test classes can be used to experiment with

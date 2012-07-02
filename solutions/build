@@ -1,0 +1,3 @@
+cat pieces/add-and-a* > add-and-a.clj
+cat pieces/class-?.clj > class.clj
+cat pieces/superclass-?.clj > superclass.clj
