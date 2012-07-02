@@ -1,4 +1,3 @@
-
 ;;; Exercise 1
 
 (def factorial
@@ -38,29 +37,6 @@
 
 (prn (recursive-function [1 2 3 4] 0))
 
-;;; Exercise 4
-
-(def recursive-function
-     (fn [something so-far]
-       (if (empty? something)
-         so-far
-         (recursive-function (rest something)
-                             (* (first something) so-far)))))
-
-(prn (recursive-function [1 2 3 4] 1))
-
-(def recursive-function
-     (fn [combiner something so-far]
-       (if (empty? something)
-         so-far
-         (recursive-function combiner
-                             (rest something)
-                             (combiner (first something)
-                                       so-far)))))
-
-(prn (recursive-function * [1 2 3 4] 1))
-(prn (recursive-function + [1 2 3 4] 0))
-
 ;;; Exercise 5
 
 (prn (recursive-function (fn [elt so-far]
@@ -76,13 +52,13 @@
 ;;; Exercise 6
 
 ; I can't help you pat yourself on the back.
-user=> (reduce * 1 [1 2 3 4])
+(reduce * 1 [1 2 3 4])
 24
-user=> (reduce (fn [so-far val] (assoc so-far val (count so-far)))
-               {}
-               [:a :b :c])
+(reduce (fn [so-far val] (assoc so-far val (count so-far)))
+        {}
+        [:a :b :c])
 {:c 0, :b 0, :a 0}
-user=> (reduce (fn [so-far val] (assoc so-far val (count so-far)))
-               {}
-               [:a :b :c])
+(reduce (fn [so-far val] (assoc so-far val (count so-far)))
+        {}
+        [:a :b :c])
 {:c 2, :b 1, :a 0}
