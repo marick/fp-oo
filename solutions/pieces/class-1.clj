@@ -20,8 +20,6 @@
 
 (def apply-message-to
      (fn [class instance message args]
-       (assert (map? class))
-       (assert (map? instance))
        (apply (method-from-message message class)
               instance args)))
 
