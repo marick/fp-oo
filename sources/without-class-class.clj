@@ -22,12 +22,12 @@
   :__instance_methods__
   {
     :add-instance-values identity
-    :to-string (fn [this] (str this))
     :method-missing
     (fn [this message args]
       (throw (Error. (cl-format nil "A ~A does not accept the message ~A."
                                 (send-to this :class-name)
                                 message))))
+    :to-string (fn [this] (str this))
     :class-name :__class_symbol__    
     :class (fn [this] (class-from-instance this))
    }
@@ -86,9 +86,7 @@
 (def superclass-from-instance
      (fn [instance]
        (assert (map? instance))
-       (eval (class-symbol-above (:__class_symbol__ instance)))))
-
-
+       (eval (:__superclass_symbol__ (class-from-instance instance)))))
 
 ;; Core dispatch function
 
@@ -103,21 +101,18 @@
        (lineage-1 class-symbol [])))
 
 (def method-cache
-     (fn [class-symbol]
-       (let [method-maps (map class-instance-methods
+     (fn [class]
+       (let [class-symbol (:__own_symbol__ class)
+             method-maps (map class-instance-methods
                               (lineage class-symbol))]
          (apply merge method-maps))))
 
 (def apply-message-to
      (fn [class instance message args]
-       (assert (map? class))
-       (assert (map? instance))
-       (let [class-symbol (:__own_symbol__ class)
-             method (message (method-cache class-symbol))]
+       (let [method (message (method-cache class))]
          (if method
            (apply method instance args)
            (send-to instance :method-missing message args)))))
-
 
 ;;; The public interface
 
@@ -132,5 +127,3 @@
      (fn [instance message & args]
        (apply-message-to (superclass-from-instance instance)
                          instance message args)))
-
-
