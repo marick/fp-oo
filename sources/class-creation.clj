@@ -17,7 +17,9 @@
               :__instance_methods__ instance-methods)))
 
 (def install-half-of-class-pair
-     (fn [my-name left-symbol up-symbol instance-methods]
+     (fn [my-name _left left-symbol _up up-symbol instance-methods]
+       (assert (= _left :left))
+       (assert (= _up :up))
        (let [return-value (basic-class my-name left-symbol up-symbol instance-methods)]
          (intern *ns* my-name return-value)
          return-value)))
@@ -90,7 +92,9 @@
        (apply-message-to (superclass-from-instance instance)
                          instance message args)))
 
-(install-half-of-class-pair (metasymbol 'Anything), 'Anything, 'Anything,
+(install-half-of-class-pair 'MetaAnything,
+                            :left 'Anything,
+                            :up 'Anything,
                             { 
                              :new
                              (fn [class & args]
@@ -98,7 +102,9 @@
                                  (apply-message-to class seeded :add-instance-values args)))
                             })
 
-(install-half-of-class-pair 'Anything, (metasymbol 'Anything), nil,
+(install-half-of-class-pair 'Anything,
+                            :left 'MetaAnything,
+                            :up nil,
                             {
                              :add-instance-values identity
                              :method-missing
@@ -111,7 +117,9 @@
                              :class (fn [this] (class-from-instance this))
                              })
                             
-(install-half-of-class-pair (metasymbol 'ClassMaker), 'Anything, (metasymbol 'Anything),
+(install-half-of-class-pair 'MetaClassMaker,
+                            :left 'Anything,
+                            :up 'MetaAnything,
                             {
                              :new
                              (fn [this
@@ -120,17 +128,21 @@
                                ;; Metaclass
                                (install-half-of-class-pair
                                  (metasymbol new-class-symbol)
-                                 'Anything (metasymbol 'Anything)
+                                 :left 'Anything
+                                 :up 'MetaAnything
                                  class-methods)
                                ;; Class
                                (install-half-of-class-pair
                                  new-class-symbol
-                                 (metasymbol new-class-symbol) superclass-symbol
+                                 :left (metasymbol new-class-symbol)
+                                 :up superclass-symbol
                                  instance-methods))
                                ;; Return value is the new class object (not name)
                             })
 
-(install-half-of-class-pair 'ClassMaker, (metasymbol 'ClassMaker), 'Anything,
+(install-half-of-class-pair 'ClassMaker,
+                            :left 'MetaClassMaker,
+                            :up 'Anything,
                             {
                             })
                             

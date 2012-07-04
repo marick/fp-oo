@@ -28,14 +28,6 @@
           :origin (fn [class] (send-to class :new 0 0))
          })
 
-(clojure.pprint/pprint Point)
-(clojure.pprint/pprint MetaPoint)
-
-(prn "+++++++++")
-(send-to Point :new 0 0)
-(prn "+++++++++")
-
-
 (fact
   (send-to Point :origin) => (send-to Point :new 0 0)
 
