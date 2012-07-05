@@ -9,25 +9,26 @@
      (fn [class-symbol]
        {:__class_symbol__ class-symbol}))
 
-(def metasymbol
-     (fn [some-symbol]
-       (symbol (str "Meta" some-symbol))))
-
 (def basic-class
-     (fn [my-name left-symbol up-symbol instance-methods]
+     (fn [my-name
+          _left left-symbol
+          _up up-symbol
+          instance-methods]
+       (assert (= _left :left))
+       (assert (= _up :up))
        (assoc (basic-object left-symbol)
               :__own_symbol__ my-name
               :__superclass_symbol__ up-symbol
               :__instance_methods__ instance-methods)))
 
-(def install-half-of-class-pair
-     (fn [my-name _left left-symbol _up up-symbol instance-methods]
-       (assert (= _left :left))
-       (assert (= _up :up))
-       (let [return-value (basic-class my-name left-symbol up-symbol instance-methods)]
-         (intern *ns* my-name return-value)
-         return-value)))
+(def install 
+     (fn [class]
+         (intern *ns* (:__own_symbol__ class) class)
+         class))
 
+(def metasymbol
+     (fn [some-symbol]
+       (symbol (str "Meta" some-symbol))))
 
 ;;; Here are methods that take a class-symbol or instance containing one and follow it somewhere. 
 
@@ -97,61 +98,60 @@
 ;;; The two class/pairs from which everything else can be built
 
 ;; Anything
-(install-half-of-class-pair 'Anything,
-                            :left 'MetaAnything,
-                            :up nil,
-                            {
-                             :add-instance-values identity
-                             :method-missing
-                             (fn [this message args]
-                               (throw (Error. (cl-format nil "A ~A does not accept the message ~A."
-                                                         (send-to this :class-name)
-                                                         message))))
-                             :to-string (fn [this] (str this))
-                             :class-name :__class_symbol__    
-                             :class (fn [this] (class-from-instance this))
-                             })
+(install (basic-class 'Anything,
+                      :left 'MetaAnything,
+                      :up nil,
+                      {
+                       :add-instance-values identity
+                       :method-missing
+                       (fn [this message args]
+                         (throw (Error. (cl-format nil "A ~A does not accept the message ~A."
+                                                   (send-to this :class-name)
+                                                   message))))
+                       :to-string (fn [this] (str this))
+                       :class-name :__class_symbol__    
+                       :class (fn [this] (class-from-instance this))
+                       }))
                             
-(install-half-of-class-pair 'MetaAnything,
-                            :left 'Anything,
-                            :up 'Anything,
-                            { 
-                             :new
-                             (fn [class & args]
-                               (let [seeded {:__class_symbol__ (:__own_symbol__ class)}]
-                                 (apply-message-to class seeded :add-instance-values args)))
-                            })
+(install (basic-class 'MetaAnything,
+                      :left 'Anything,
+                      :up 'Anything,
+                      { 
+                       :new
+                       (fn [class & args]
+                         (let [seeded {:__class_symbol__ (:__own_symbol__ class)}]
+                           (apply-message-to class seeded :add-instance-values args)))
+                       }))
 
 
 ;; Klass
-(install-half-of-class-pair 'Klass,
-                            :left 'MetaKlass,
-                            :up 'Anything,
-                            {
-                            })
+(install (basic-class 'Klass,
+                      :left 'MetaKlass,
+                      :up 'Anything,
+                      {
+                      }))
                             
-(install-half-of-class-pair 'MetaKlass,
-                            :left 'Anything,
-                            :up 'MetaAnything,
-                            {
-                             :new
-                             (fn [this
-                                  new-class-symbol superclass-symbol
-                                  instance-methods class-methods]
-                               ;; Metaclass
-                               (install-half-of-class-pair
-                                 (metasymbol new-class-symbol)
-                                 :left 'Anything
-                                 :up 'MetaAnything
-                                 class-methods)
-                               ;; Class
-                               (install-half-of-class-pair
-                                 new-class-symbol
-                                 :left (metasymbol new-class-symbol)
-                                 :up superclass-symbol
-                                 instance-methods))
-                               ;; Return value is the new class object (not name)
-                            })
+(install (basic-class 'MetaKlass,
+                      :left 'Anything,
+                      :up 'MetaAnything,
+                      {
+                       :new
+                       (fn [this
+                            new-class-symbol superclass-symbol
+                            instance-methods class-methods]
+                         ;; Metaclass
+                         (install
+                          (basic-class (metasymbol new-class-symbol)
+                                       :left 'Anything
+                                       :up 'MetaAnything
+                                       class-methods))
+                         ;; Class
+                         (install
+                          (basic-class new-class-symbol
+                                       :left (metasymbol new-class-symbol)
+                                       :up superclass-symbol
+                                       instance-methods)))
+                       }))
 
 ;; An example class:
 
