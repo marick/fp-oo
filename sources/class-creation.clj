@@ -9,6 +9,10 @@
      (fn [class-symbol]
        {:__class_symbol__ class-symbol}))
 
+(def metasymbol
+     (fn [some-symbol]
+       (symbol (str "Meta" some-symbol))))
+
 (def basic-class
      (fn [my-name left-symbol up-symbol instance-methods]
        (assoc (basic-object left-symbol)
@@ -24,9 +28,6 @@
          (intern *ns* my-name return-value)
          return-value)))
 
-(def metasymbol
-     (fn [some-symbol]
-       (symbol (str "Meta" some-symbol))))
 
 ;;; Here are methods that take a class-symbol or instance containing one and follow it somewhere. 
 
@@ -92,16 +93,10 @@
        (apply-message-to (superclass-from-instance instance)
                          instance message args)))
 
-(install-half-of-class-pair 'MetaAnything,
-                            :left 'Anything,
-                            :up 'Anything,
-                            { 
-                             :new
-                             (fn [class & args]
-                               (let [seeded {:__class_symbol__ (:__own_symbol__ class)}]
-                                 (apply-message-to class seeded :add-instance-values args)))
-                            })
 
+;;; The two class/pairs from which everything else can be built
+
+;; Anything
 (install-half-of-class-pair 'Anything,
                             :left 'MetaAnything,
                             :up nil,
@@ -117,7 +112,25 @@
                              :class (fn [this] (class-from-instance this))
                              })
                             
-(install-half-of-class-pair 'MetaClassMaker,
+(install-half-of-class-pair 'MetaAnything,
+                            :left 'Anything,
+                            :up 'Anything,
+                            { 
+                             :new
+                             (fn [class & args]
+                               (let [seeded {:__class_symbol__ (:__own_symbol__ class)}]
+                                 (apply-message-to class seeded :add-instance-values args)))
+                            })
+
+
+;; Klass
+(install-half-of-class-pair 'Klass,
+                            :left 'MetaKlass,
+                            :up 'Anything,
+                            {
+                            })
+                            
+(install-half-of-class-pair 'MetaKlass,
                             :left 'Anything,
                             :up 'MetaAnything,
                             {
@@ -140,9 +153,31 @@
                                ;; Return value is the new class object (not name)
                             })
 
-(install-half-of-class-pair 'ClassMaker,
-                            :left 'MetaClassMaker,
-                            :up 'Anything,
-                            {
-                            })
-                            
+;; An example class:
+
+(send-to Klass :new
+         'Point 'Anything
+         {
+          :x :x
+          :y :y 
+
+          :add-instance-values
+          (fn [this x y]
+            (assoc this :x x :y y))
+          
+          :shift
+          (fn [this xinc yinc]
+            (let [my-class (send-to this :class)]
+              (send-to my-class :new
+                                (+ (:x this) xinc)
+                                (+ (:y this) yinc))))
+          :add
+          (fn [this other]
+            (send-to this :shift (:x other)
+                                 (:y other)))
+         } 
+         
+         {
+          :origin (fn [class] (send-to class :new 0 0))
+         })
+
