@@ -84,8 +84,6 @@
 
 (def send-to
      (fn [instance message & args]
-       ;; This may sometimes help you:
-       ;; (pprint ["in send-to" instance message args])
        (apply-message-to (class-from-instance instance)
                          instance message args)))
 
