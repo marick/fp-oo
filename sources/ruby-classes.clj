@@ -17,7 +17,7 @@
                        }))
                             
 (install (basic-class 'MetaAnything,
-                      :left 'Anything,
+                      :left 'Klass,
                       :up 'Klass,
                       { 
                        }))
@@ -35,7 +35,7 @@
                       }))
                             
 (install (basic-class 'MetaKlass,
-                      :left 'Anything,
+                      :left 'Klass,
                       :up 'Klass,
                       {
                        :new
@@ -45,7 +45,7 @@
                          ;; Metaclass
                          (install
                           (basic-class (metasymbol new-class-symbol)
-                                       :left 'Anything
+                                       :left 'Klass
                                        :up 'Klass
                                        class-methods))
                          ;; Class
