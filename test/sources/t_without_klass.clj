@@ -1,7 +1,7 @@
-(ns sources.t-without-class-class
+(ns sources.t-without-klass
   (:use midje.sweet))
 
-(load-file "sources/without-class-class.clj")
+(load-file "sources/without-klass.clj")
 
 (def object (send-to Anything :new))
      

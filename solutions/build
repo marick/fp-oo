@@ -2,4 +2,5 @@ cat pieces/add-and-a* > add-and-a.clj
 cat pieces/class-?.clj > class.clj
 cat pieces/superclass-*.clj > superclass.clj
 cat pieces/recursion-?.clj > recursion.clj
-cat pieces/without-class-class-?.clj > without-class-class.clj
+cat pieces/without-klass-?.clj > without-klass.clj
+cat pieces/klass-?.clj > klass.clj

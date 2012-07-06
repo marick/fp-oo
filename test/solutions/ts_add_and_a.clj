@@ -1,4 +1,4 @@
-(ns solutions.t-add-and-a
+(ns solutions.ts-add-and-a
   (:use midje.sweet))
 
 (load-file "sources/add-and-a.clj")

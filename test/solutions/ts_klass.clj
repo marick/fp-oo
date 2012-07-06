@@ -1,9 +1,16 @@
-(ns solutions.t-class-name
+(ns solutions.ts-klass
    (:use midje.sweet))
 
-(load-file "sources/class-creation.clj")
-(load-file "sources/ruby-classes.clj")
-(load-file "solutions/class-name.clj")
+(load-file "sources/klass-1.clj")
+(load-file "sources/klass-2.clj")
+(load-file "solutions/pieces/klass-1.clj")
+
+(fact
+  (send-to Point :to-string) => "class Point"
+  (send-to Klass :to-string) => "class Klass"
+  (send-to (send-to Anything :new) :to-string) => "{:__class_symbol__ Anything}")
+
+(load-file "solutions/pieces/klass-2.clj")
 
 (fact
   (send-to (send-to Anything :new) :class-name) => 'Anything

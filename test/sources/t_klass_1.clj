@@ -1,7 +1,7 @@
-(ns sources.t-class-creation
+(ns sources.t-klass-1
   (:use midje.sweet))
 
-(load-file "sources/class-creation.clj")
+(load-file "sources/klass-1.clj")
 
 (fact
   (send-to Point :origin) => (send-to Point :new 0 0)

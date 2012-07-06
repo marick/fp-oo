@@ -1,4 +1,4 @@
-(ns solutions.t-embedded-functions
+(ns solutions.ts-embedded-functions
   (:use midje.sweet))
 
 

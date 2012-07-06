@@ -1,4 +1,4 @@
-(ns solutions.t-superclass
+(ns solutions.ts-superclass
   (:use midje.sweet))
 
 (load-file "sources/superclass.clj")

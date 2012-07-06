@@ -1,4 +1,4 @@
-(ns solutions.t-recursion
+(ns solutions.ts-recursion
   (:use midje.sweet))
 
 (load-file "solutions/pieces/recursion-1.clj")

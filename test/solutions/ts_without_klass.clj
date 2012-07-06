@@ -1,8 +1,8 @@
-(ns solutions.t-without-class-class
+(ns solutions.ts-without-klass
   (:use midje.sweet))
 
-(load-file "sources/without-class-class.clj")
-(load-file "solutions/pieces/without-class-class-1.clj")
+(load-file "sources/without-klass.clj")
+(load-file "solutions/pieces/without-klass-1.clj")
 
 ;;; As before...
 (def object (send-to Anything :new))
@@ -35,7 +35,7 @@
   (send-to Anything :class-name) => 'MetaAnything)
   
 
-(load-file "solutions/pieces/without-class-class-2.clj")
+(load-file "solutions/pieces/without-klass-2.clj")
 
 (fact "method-missing works on classes"
   (send-to MetaPoint :unknown) => (throws Error)
