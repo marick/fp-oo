@@ -37,6 +37,29 @@
 
 (prn (recursive-function [1 2 3 4] 0))
 
+;;; Exercise 4
+
+(def recursive-function
+     (fn [something so-far]
+       (if (empty? something)
+         so-far
+         (recursive-function (rest something)
+                             (* (first something) so-far)))))
+
+(prn (recursive-function [1 2 3 4] 1))
+
+(def recursive-function
+     (fn [combiner something so-far]
+       (if (empty? something)
+         so-far
+         (recursive-function combiner
+                             (rest something)
+                             (combiner (first something)
+                                       so-far)))))
+
+(prn (recursive-function * [1 2 3 4] 1))
+(prn (recursive-function + [1 2 3 4] 0))
+
 ;;; Exercise 5
 
 (prn (recursive-function (fn [elt so-far]
