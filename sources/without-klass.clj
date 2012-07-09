@@ -1,4 +1,4 @@
-(declare class-from-instance send-to apply-message-to)
+(declare class-from-instance send-to send-super apply-message-to)
 ;; This imports a function from another namespace. (Think package or module.)
 (use '[clojure.pprint :only [cl-format]])
 
@@ -61,6 +61,11 @@
     :add (fn [this other]
            (send-to this :shift (:x other)
                                 (:y other)))
+    :to-string
+    (fn [this]
+      (cl-format nil "A ~A like this: ~A"
+                 (send-to this :class-name)
+                 (send-super this :to-string)))
    }
  })
 
@@ -118,8 +123,6 @@
 
 (def send-to
      (fn [instance message & args]
-       ;; This may sometimes help you:
-       ;; (pprint ["in send-to" instance message args])
        (apply-message-to (class-from-instance instance)
                          instance message args)))
 

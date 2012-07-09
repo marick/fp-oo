@@ -18,7 +18,7 @@
   (send-to point :add point) => (send-to Point :new 2 4)
   (send-to point :x) => 1
   (send-to point :y) => 2
-  (send-to point :to-string) => "{:y 2, :x 1, :__class_symbol__ Point}"
+  (send-to point :to-string) => "A Point like this: {:y 2, :x 1, :__class_symbol__ Point}"
   (send-to point :class-name) => 'Point
   (send-to point :class) => Point)
 
