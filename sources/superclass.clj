@@ -18,9 +18,7 @@
 (def Point
 {
   :__own_symbol__ 'Point
-  ;; vvvvv                             New
-  :__superclass_symbol__ 'Anything
-  ;; ^^^^^                             New
+  :__superclass_symbol__ 'Anything   ;; <<= New
   :__instance_methods__
   {
     :add-instance-values (fn [this x y]
