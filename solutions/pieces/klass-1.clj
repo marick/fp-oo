@@ -1,7 +1,7 @@
 ;;; Exercise 1
 
 ;;; I'm using a new Clojure function: `assoc-in`. It lets you create a
-;;; new map with a deeply nested value changes. You give it the path
+;;; new map with a deeply nested value changed. You give it the path
 ;;; to the value you want replaced.
 
 (def Klass
