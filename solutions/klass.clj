@@ -1,17 +1,17 @@
-(install (basic-class 'Klass,
-                      :left 'MetaKlass,
-                      :up 'Anything,
-                      {
-                       :new
-                       (fn [class & args]
-                         (let [seeded {:__class_symbol__ (:__own_symbol__ class)}]
-                           (apply-message-to class seeded :add-instance-values args)))
+;;; Exercise 1
 
-                       :to-string                          ; <<<<= new
-                       (fn [class]
-                         (str "class " (:__own_symbol__ class)))
-                      }))
+;;; I'm using a new Clojure function: `assoc-in`. It lets you create a
+;;; new map with a deeply nested value changes. You give it the path
+;;; to the value you want replaced.
 
+(def Klass
+     (assoc-in Klass
+               [:__instance_methods__ :to-string]
+               (fn [class]
+                 (str "class " (:__own_symbol__ class)))))
+
+
+;;; Exercise 2
 
 
 ;; I'll mark classes invisible by tagging them with metadata.
@@ -23,15 +23,14 @@
 (def invisible?
      (fn [class-symbol] (:__invisible__ (eval class-symbol))))
 
-;; If you look left of a Point, you see 'Point. If you look left of class
-;; Point, you see `MetaPoint`.
-;; 
+;; Change the already-defined metaclasses to be invisible:
 
-;; My solution builds on `lineage`. We can easily find the bottom of a
-;; lineage by following the class symbol left. So, for example,
-;; left of a Point is 'Point, and left of 'Point is `MetaPoint.
-;; If the class is an invisible class, you have to go up. Rather than
-;; introduce an `if` expression, I'll 
+(def MetaAnything (invisible MetaAnything))
+(def MetaKlass (invisible MetaKlass))
+(def MetaPoint (invisible MetaPoint))
+
+;; Ancestors just removes invisible classes from the
+;; reversed lineage.
 
 (def Klass
      (assoc-in Klass
@@ -40,18 +39,7 @@
                  (remove invisible?
                          (reverse (lineage (:__own_symbol__ class)))))))
 
-(def Anything
-     (assoc-in Anything
-               [:__instance_methods__ :class-name]
-               (fn [this]
-                 (first (send-to (eval (:__class_symbol__ this))
-                                 :ancestors)))))
-
-(def Anything
-     (assoc-in Anything
-               [:__instance_methods__ :class]
-               (fn [this]
-                 (eval (send-to this :class-name)))))
+;; New metaclasses need to be created to be invisible.
 
 (def MetaKlass
      (assoc-in MetaKlass
@@ -75,9 +63,8 @@
                                 :up superclass-symbol
                                 instance-methods)))))
 
-(def MetaAnything (invisible MetaAnything))
-(def MetaKlass (invisible MetaKlass))
-(def MetaPoint (invisible MetaPoint))
+
+;; Test data:
 
 (send-to Klass :new
          'ColoredPoint 'Point
@@ -93,6 +80,29 @@
           :origin (fn [class]
                     (send-to class :new 0 0 'white))
           })
+
+(prn (send-to Anything :ancestors))     
+(prn (send-to Klass :ancestors))     
+(prn (send-to Point :ancestors))
+(prn (send-to ColoredPoint :ancestors))
+
+
+;;; Exercise 3
+
+(def Anything
+     (assoc-in Anything
+               [:__instance_methods__ :class-name]
+               (fn [this]
+                 (first (send-to (eval (:__class_symbol__ this))
+                                 :ancestors)))))
+
+(def Anything
+     (assoc-in Anything
+               [:__instance_methods__ :class]
+               (fn [this]
+                 (eval (send-to this :class-name)))))
+
+
 
 (prn (send-to Anything :class-name))     
 (prn (send-to Klass :class-name))     

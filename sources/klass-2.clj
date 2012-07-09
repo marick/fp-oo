@@ -1,3 +1,5 @@
+;; This imports a function from another namespace. (Think package or module.)
+(use '[clojure.pprint :only [cl-format]])
 ;;; The two class/pairs from which everything else can be built
 
 ;; Anything
@@ -68,6 +70,11 @@
           (fn [this x y]
             (assoc this :x x :y y))
           
+          :to-string
+          (fn [this]
+            (cl-format nil "A ~A like this: ~A"
+                       (send-to this :class-name)
+                       (send-super this :to-string)))
           :shift
           (fn [this xinc yinc]
             (let [my-class (send-to this :class)]
