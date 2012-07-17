@@ -10,8 +10,7 @@
        (fn [lookup-key]
          (if (= lookup-key new-key)
            value
-           (fap lookup-key))))
-)
+           (fap lookup-key)))))
 
 (def fmerge
      (fn [fap map]
