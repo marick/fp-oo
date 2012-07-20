@@ -5,7 +5,7 @@
 (load-file "solutions/without-klass.clj")
 
 
-(load-file "solutions/higher-order-functions.clj")
+(load-file "solutions/pieces/higher-order-functions-1-6.clj")
 
 ;;; 1
 
@@ -40,3 +40,30 @@
 ;;; 6
 
 (fact ( (always 1) 8 8 8) => 1)
+
+(load-file "sources/higher-order-functions.clj")
+(load-file "solutions/pieces/higher-order-functions-7-8.clj")
+
+(fact 
+  (isbn? "0131774115") => truthy
+  (isbn? "0977716614") => falsey
+  (isbn? "1934356190") => truthy)
+
+(load-file "solutions/pieces/higher-order-functions-9.clj")
+
+(fact
+  (upc? "074182265830") => truthy
+  (upc? "731124100023") => truthy
+  (upc? "722252601404") => falsey)
+
+(load-file "solutions/pieces/higher-order-functions-a.clj")
+
+(fact 
+  (isbn? "0131774115") => truthy
+  (isbn? "0977716614") => falsey
+  (isbn? "1934356190") => truthy
+  (upc? "074182265830") => truthy
+  (upc? "731124100023") => truthy
+  (upc? "722252601404") => falsey)
+
+
