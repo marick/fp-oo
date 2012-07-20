@@ -6,3 +6,4 @@ cat pieces/without-klass-?.clj > without-klass.clj
 cat pieces/klass-?.clj > klass.clj
 cat pieces/building-data-*.clj > building-data.clj
 cat pieces/higher-order-functions-*.clj > higher-order-functions.clj
+cat pieces/Y-?.clj > Y.clj
