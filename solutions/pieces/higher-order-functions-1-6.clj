@@ -37,12 +37,15 @@
 (def my-atom (atom 0))
 (swap! my-atom (fn [anything] 33))
 
-(swap! my-atom (constantly 34))
-
 ;;; 6
 
 (def always
      (fn [value]
        (fn [& anything] value)))
 
+(swap! my-atom (always 8))
+
+;; or
+
+(swap! my-atom (constantly 8))
 

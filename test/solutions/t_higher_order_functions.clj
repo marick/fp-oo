@@ -66,4 +66,13 @@
   (upc? "731124100023") => truthy
   (upc? "722252601404") => falsey)
 
+(load-file "solutions/pieces/higher-order-functions-b.clj")
 
+(def complement* (lift not))
+(def negativize (lift -))
+(def triplize (lift (partial * 3)))
+
+(fact
+  ( (complement* even?) 2) => falsey
+  ( (negativize +) 1 2 3) => -6
+  ( (triplize -) 0 1 2) => -9)
