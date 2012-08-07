@@ -1,19 +1,21 @@
 (use 'clojure.algo.monads)
 
-(def use-value-to-decide-what-to-do
+(def decider
      (fn [value continuation]
        (if (nil? value)
          nil
          (continuation value))))
 
-(defmonad maybe-monad
-  [m-result identity
-   m-bind   use-value-to-decide-what-to-do])
+(def maybe-monad
+     (monad [m-result identity
+             m-bind   decider]))
 
-(domonad maybe-monad
-         [a nil
-          b (+ 1 a)] ; would blow up
-   b)
+(with-monad maybe-monad
+  (domonad [a nil
+            b (+ 1 a)] ; would blow up
+     b))
+
+;; Error utilities
 
 (def oops!
      (fn [reason & args]

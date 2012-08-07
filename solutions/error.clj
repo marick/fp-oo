@@ -1,14 +1,14 @@
 (use 'clojure.algo.monads)
 
-(def use-value-to-decide-what-to-do
+(def decider
      (fn [value continuation]
        (if (oopsie? value)
          value
          (continuation value))))
 
-(defmonad error-monad
-  [m-result identity
-   m-bind   use-value-to-decide-what-to-do])
+(def error-monad
+     (monad [m-result identity
+             m-bind   decider]))
 
 (def factorial
      (fn [n]
@@ -20,10 +20,10 @@
              
              :else
              (* n (factorial (dec n))))))
-                 
-(domonad error-monad
-         [a -1
-          b (factorial a)
-          c (factorial (- a))]
-   (* a b c))
+
+(with-monad error-monad
+  (domonad [a -1
+            b (factorial a)
+            c (factorial (- a))]
+     (* a b c)))
           
