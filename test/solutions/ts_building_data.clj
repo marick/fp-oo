@@ -1,4 +1,4 @@
-(ns solutions.t-building-data
+(ns solutions.ts-building-data
   (:use midje.sweet))
 
 (load-file "sources/building-data.clj")

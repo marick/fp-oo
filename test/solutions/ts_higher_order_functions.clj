@@ -1,4 +1,4 @@
-(ns solutions.t-higher-order-functions
+(ns solutions.ts-higher-order-functions
   (:use midje.sweet))
 
 (load-file "sources/without-klass.clj")

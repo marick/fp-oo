@@ -1,4 +1,4 @@
-(ns solutions.t-Y
+(ns solutions.ts-Y
   (:use midje.sweet))
 
 (load-file "solutions/pieces/Y-1.clj")
