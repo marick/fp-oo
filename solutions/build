@@ -8,3 +8,4 @@ cat pieces/building-data-*.clj > building-data.clj
 cat pieces/higher-order-functions-*.clj > higher-order-functions.clj
 cat pieces/Y-?.clj > Y.clj
 cat pieces/function-monads*.clj > function-monads.clj
+cat pieces/scheduling-?.clj > scheduling.clj

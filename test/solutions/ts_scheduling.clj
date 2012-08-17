@@ -2,32 +2,68 @@
   (:use midje.sweet)
   (:import java.util.Date))
 
-(load-file "solutions/scheduling.clj")
+(load-file "solutions/pieces/scheduling-1.clj")
 
-(fact "courses which are full can be removed"
-  (remove-full [{:spaces-left 0} {:spaces-left 2}])
-  => [{:spaces-left 2}])
+(fact "note-unavailability"
+  (fact "with available instructors"
+    (note-unavailability [{:full? true, :empty? false}
+                          {:full? false, :empty? true}
+                          {:full? false, :empty? false}]
+                         3
+                         false)
+    =>  [{:full? true, :empty? false, :unavailable? true}
+         {:full? false, :empty? true, :unavailable? false}
+         {:full? false, :empty? false, :unavailable? false}])
+  (fact "without available instructors"
+    (note-unavailability [{:full? true, :empty? false}
+                          {:full? false, :empty? true}
+                          {:full? false, :empty? false}]
+                         2
+                         false)
+    =>  [{:full? true, :empty? false, :unavailable? true}
+         {:full? false, :empty? true, :unavailable? true}
+         {:full? false, :empty? false, :unavailable? false}])
+  (fact "managers have a blackout time"
+    (note-unavailability [{:full? false, :empty? false, :morning? true}
+                          {:full? false, :empty? false, :morning? false}]
+                         2
+                         true)
+    =>  [{:full? false, :empty? false, :morning? true, :unavailable? false}
+         {:full? false, :empty? false, :morning? false, :unavailable? true}])
+  (fact "non-manager do not"
+    (note-unavailability [{:full? false, :empty? false, :morning? true}
+                          {:full? false, :empty? false, :morning? false}]
+                         2
+                         false)
+    =>  [{:full? false, :empty? false, :morning? true, :unavailable? false}
+         {:full? false, :empty? false, :morning? false, :unavailable? false}]))
 
-(facts "courses with no registrants"
-  (let [courses [{:registered 1} {:registered 0}]]
-    (fact "will be removed if instructors are used up"
-      (remove-unbookable courses 1) => [{:registered 1}])
-    (fact "will be retained if instructors are not"
-    (remove-unbookable courses 2) => courses)))
 
-(facts ":already-in? courses can be forced into the set"
-  (add-back-already-in [:existing] [{:already-in? true}]) => #{:existing {:already-in? true}}
-  (add-back-already-in [:existing] [{:already-in? false}]) => #{:existing}
-  (add-back-already-in [{:already-in? true}] [{:already-in? true}]) => #{ {:already-in? true} })
 
-(facts "assertions on add-back-already-in data"
-  (asserty-add-back-already-in-1 [{:already-in? true}] [{:already-in? false}])
-  => #{ {:already-in? true}} 
-  (asserty-add-back-already-in-1 [{:already-in? true}] [{:already-in? false :foo 1}])
-  => (throws java.lang.AssertionError)
 
-  (asserty-add-back-already-in-2 [{:already-in? true}] [{:already-in? false}])
-  => #{ {:already-in? true}} 
-  (asserty-add-back-already-in-2 [{:already-in? true}] [{:already-in? true :foo 1}])
-  => (throws java.lang.AssertionError))
+(fact "the solution sorts and whatnot"
+  (solution [{:course-name "AM1", :morning? true, :limit 5, :registered 3}
+             {:course-name "AM2", :morning? true, :limit 5, :registered 2}
+             {:course-name "AM3", :morning? true, :limit 5, :registered 5}
+             {:course-name "AM4", :morning? true, :limit 5, :registered 0}
+             
+             {:course-name "PM1", :morning? false, :limit 4, :registered 4}
+             {:course-name "PM2", :morning? false, :limit 4, :registered 0}
+             {:course-name "PM3", :morning? false, :limit 4, :registered 2}]
+            {:manager? false :course-names ["AM3"]}
+            3)
+  =>  [ [{:course-name "AM1", :morning? true, :registered 3, :spaces-left 2, :already-in? false}
+         {:course-name "AM2", :morning? true, :registered 2, :spaces-left 3, :already-in? false}
+         {:course-name "AM3", :morning? true, :registered 5, :spaces-left 0, :already-in? true}]
+             
+        [{:course-name "PM2", :morning? false, :registered 0, :spaces-left 4, :already-in? false}
+         {:course-name "PM3", :morning? false, :registered 2, :spaces-left 2, :already-in? false}]])
 
+
+(fact "just confirm that managers don't get afternoon courses"
+  (solution [{:course-name "PM1", :morning? false, :limit 4, :registered 4}
+             {:course-name "PM2", :morning? false, :limit 4, :registered 0}
+             {:course-name "PM3", :morning? false, :limit 4, :registered 2}]
+            {:manager? true :course-names []}
+            3)
+  =>  [ [] [] ])
