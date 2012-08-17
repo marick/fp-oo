@@ -79,6 +79,8 @@
 (println "-----------")
 (println "Running run-and-charge.")
 
+
+
 ;;; State monad
 
 (def state-monad
@@ -105,3 +107,19 @@
      (fn [new-state]
        (fn [state]
          {:state new-state, :result state})))
+
+
+(def calculation-with-initial-state
+     (with-monad state-monad
+       (domonad [original-state (assign-state 88)
+                 state (get-state)]
+            (str "original state " original-state " was set to " state))))
+
+ (def mixer
+      (with-monad state-monad
+        (let [frozen-step m-result]
+          (domonad [original (get-state)
+                    a (frozen-step (+ original 88))
+                    b (frozen-step (* a 2))
+                    _ (assign-state b)]
+                   [original a b]))))
