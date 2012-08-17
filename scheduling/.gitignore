@@ -1,0 +1,5 @@
+.bundle
+.jhw-cache
+spec/*.js
+src/coffee/*.js
+TAGS

@@ -1,0 +1,49 @@
+require 'rake'
+
+require 'rubygems'
+require 'sequel'
+require 'sequel/extensions/migration'
+
+DB = Sequel.postgres("fpoo", :host => 'localhost')
+
+
+desc "migrate from FROM to TO (both are optional)"
+task :migrate do
+   migrate(i_or_nil('TO'), i_or_nil('FROM'))
+end
+
+desc "show current migration version"
+task :migration_version do 
+  puts Sequel::Migrator.get_current_migration_version(DB)
+end  
+
+desc "make current migration version TO without actually running the migrations"
+task :set_migration_version do 
+     Sequel::Migrator.set_current_migration_version(DB, i('TO'))
+     system('rake migration_version')
+end  
+
+def migrate(to=nil, from = nil)
+  puts "Migrate from #{from.inspect} to #{to.inspect}."
+  Sequel::Migrator.apply(DB, 'migrations', to, from)
+end
+
+def i(name)
+  i_with_nil(name) do 
+    STDERR.puts("#{name} must be given.")
+    exit 1
+ end   
+end
+
+def i_or_nil(name)
+  i_with_nil(name) do 
+    nil
+  end
+end
+
+def i_with_nil(name)
+  value = ENV[name]
+  return yield if value.nil?
+  value.to_i
+end
+

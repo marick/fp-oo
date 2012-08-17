@@ -8,12 +8,16 @@
 
 ;;; 2
 
+(def separate (juxt filter remove))
+
+;;; 3
+
 ; x         ;;; produces an error
 ; (myfun)   ;;; produces 3.
 
 ;; By substitution, x is replaced by 3 inside the body of the let.
 
-;;; 3
+;;; 4
 
 (def myfun
      ( (fn [x]
@@ -21,7 +25,7 @@
        3))
 
 
-;;; 4
+;;; 5
 
 (def make-sender
      (fn [target-finder]
@@ -32,22 +36,25 @@
 (def send-to (make-sender class-from-instance))
 (def send-super (make-sender superclass-from-instance))
 
-;;; 5
+;;; 6
 
 (def my-atom (atom 0))
 (swap! my-atom (fn [anything] 33))
 
-(swap! my-atom (constantly 34))
-
-;;; 6
+;;; 7
 
 (def always
      (fn [value]
        (fn [& anything] value)))
 
+(swap! my-atom (always 8))
+
+;; or
+
+(swap! my-atom (constantly 8))
 
 
-;;; 7
+;;; 8
 
 (def check-sum
      (fn [sequence]
@@ -55,14 +62,14 @@
                      (range 1 (inc (count sequence)))
                      sequence))))
 
-;;; 8
+;;; 9
 
 (def isbn?
      (fn [candidate]
        (zero? (rem (check-sum (reversed-digits candidate)) 11))))
 
 
-;;; 9
+;;; 10
 
 (def check-sum
      (fn [sequence]
@@ -77,7 +84,7 @@
        (zero? (rem (check-sum (reversed-digits candidate)) 10))))
 
 
-;;; 10
+;;; 11
 
 (def number-checker
      (fn [digit-function divisor]

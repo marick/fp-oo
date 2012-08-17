@@ -1,25 +1,25 @@
 (use 'clojure.algo.monads)
 
-(def decider
+(def sequence-monad-decider
      (fn [step-value continuation]
-       (apply concat
-              (map continuation step-value))))
+       (mapcat continuation step-value)))
 
-(def monadifier list)
+(def sequence-monad-monadifier list)
 
-(def nested-loop-monad
-     (monad [m-result monadifier
-             m-bind decider ]))
+(def sequence-monad
+     (monad [m-result sequence-monad-monadifier
+             m-bind sequence-monad-decider]))
 
-(with-monad nested-loop-monad
-  (domonad [a [1 2]
-            b [10, 100]
-            c [-1 1]]
-     (* a b c)))
+(prn
+ (with-monad sequence-monad
+   (domonad [a [1 2]
+             b [10, 100]
+             c [-1 1]]
+            (* a b c))))
 
-
-(with-monad nested-loop-monad
-  (domonad [a (list 1 2 3)
-            b (list (- a) a)
-            c (list (+ a b) (- a b))]
-     (* a b c)))
+(prn 
+ (with-monad sequence-monad
+   (domonad [a (list 1 2 3)
+             b (list (- a) a)
+             c (list (+ a b) (- a b))]
+            (* a b c))))

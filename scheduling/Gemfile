@@ -1,0 +1,7 @@
+source :rubygems
+
+gem "sequel"
+gem "pg"
+gem "json"
+gem "shoulda"
+
