@@ -29,7 +29,8 @@
                                               (not (:morning? course))))))
               courses))))
 
-;;; All else that's required is to call `note-unavailability` and `answer-annotations` correctly:
+;;; All else that's required is to call `note-unavailability` and `answer-annotations` correctly.
+;;; ... and call that function correctly... and that one. Higher-order functions will fix this.
 
 (def annotate
      (fn [courses registrant instructor-count]
@@ -51,3 +52,6 @@
        (map (fn [courses]
               (half-day-solution courses registrant instructor-count))
             (separate :morning? courses))))
+
+
+

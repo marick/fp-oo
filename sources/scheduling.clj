@@ -1,3 +1,6 @@
+(use 'clojure.set) ;; Not actually used here, but will be in exercises.
+
+
 (def answer-annotations
      (fn [courses registrants-courses]
        (let [checking-set (set registrants-courses)]
