@@ -30,7 +30,7 @@
                          true)
     =>  [{:full? false, :empty? false, :morning? true, :unavailable? false}
          {:full? false, :empty? false, :morning? false, :unavailable? true}])
-  (fact "non-manager do not"
+  (fact "non-managers do not"
     (note-unavailability [{:full? false, :empty? false, :morning? true}
                           {:full? false, :empty? false, :morning? false}]
                          2
