@@ -60,7 +60,7 @@
 
 (def half-day-solution
      (fn [courses]
-       (let [limit-to-visible
+       (let [visible-courses
              (fn [courses]
                (let [[guaranteed possibles] (separate :already-in? courses)]
                  (concat guaranteed (remove :unavailable? possibles))))
@@ -68,7 +68,7 @@
              sort-by-name
              (fn [courses] (sort-by :course-name courses))]
 
-         (-> courses limit-to-visible sort-by-name))))
+         (-> courses visible-courses sort-by-name))))
 
 (def final-shape
      (fn [courses]
