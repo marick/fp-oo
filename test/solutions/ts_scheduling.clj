@@ -50,7 +50,7 @@
              {:course-name "PM1", :morning? false, :limit 4, :registered 4}
              {:course-name "PM2", :morning? false, :limit 4, :registered 0}
              {:course-name "PM3", :morning? false, :limit 4, :registered 2}]
-            {:manager? false :course-names ["AM3"]}
+            {:manager? false :taking-now ["AM3"]}
             3)
   =>  [ [{:course-name "AM1", :morning? true, :registered 3, :spaces-left 2, :already-in? false}
          {:course-name "AM2", :morning? true, :registered 2, :spaces-left 3, :already-in? false}
@@ -64,7 +64,7 @@
   (solution [{:course-name "PM1", :morning? false, :limit 4, :registered 4}
              {:course-name "PM2", :morning? false, :limit 4, :registered 0}
              {:course-name "PM3", :morning? false, :limit 4, :registered 2}]
-            {:manager? true :course-names []}
+            {:manager? true :taking-now []}
             3)
   =>  [ [] [] ])
 
@@ -81,7 +81,7 @@
              {:course-name "PM1", :morning? false, :limit 4, :registered 4, :prerequisites []}
              {:course-name "PM2", :morning? false, :limit 4, :registered 0, :prerequisites []}
              {:course-name "PM3", :morning? false, :limit 4, :registered 2, :prerequisites []}]
-            {:manager? false, :course-names ["AM3"], :previously-taken []}
+            {:manager? false, :taking-now ["AM3"], :previously-taken []}
             3)
   =>  [ [{:course-name "AM1", :morning? true, :registered 3, :spaces-left 2, :already-in? false}
          {:course-name "AM2", :morning? true, :registered 2, :spaces-left 3, :already-in? false}
@@ -96,7 +96,7 @@
     (solution [{:course-name "AM1", :morning? true, :limit 5, :registered 3, :prerequisites []}
                {:course-name "AM2", :morning? true, :limit 5, :registered 2, :prerequisites []}
                {:course-name "AM3", :morning? true, :limit 5, :registered 1, :prerequisites ["AM1", "AM2"]}]
-              {:manager? false, :course-names [], :previously-taken ["AM1"]}
+              {:manager? false, :taking-now [], :previously-taken ["AM1"]}
               3)
     =>  [ [{:course-name "AM1", :morning? true, :registered 3, :spaces-left 2, :already-in? false}
            {:course-name "AM2", :morning? true, :registered 2, :spaces-left 3, :already-in? false}]
@@ -106,7 +106,7 @@
     (solution [{:course-name "AM1", :morning? true, :limit 5, :registered 3, :prerequisites []}
                {:course-name "AM2", :morning? true, :limit 5, :registered 2, :prerequisites []}
                {:course-name "AM3", :morning? true, :limit 5, :registered 1, :prerequisites ["AM1", "AM2"]}]
-              {:manager? false, :course-names [], :previously-taken ["AM1" "AM2"]}
+              {:manager? false, :taking-now [], :previously-taken ["AM1" "AM2"]}
               3)
     =>  [ [{:course-name "AM1", :morning? true, :registered 3, :spaces-left 2, :already-in? false}
            {:course-name "AM2", :morning? true, :registered 2, :spaces-left 3, :already-in? false}

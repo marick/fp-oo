@@ -3,7 +3,7 @@
 ;; A new registrant map:
 
 {:manager? true
- :course-names ["zig" "zag"]
+ :taking-now ["zig" "zag"]
  :previously-taken ["updating"]}
 
 ;; Another field for a course:
@@ -34,7 +34,7 @@
 (def annotate
      (fn [courses registrant instructor-count]
        (-> courses
-           (answer-annotations (:course-names registrant))
+           (answer-annotations (:taking-now registrant))
            domain-annotations
            (note-unavailability instructor-count registrant))))
 

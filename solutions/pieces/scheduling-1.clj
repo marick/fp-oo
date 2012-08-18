@@ -6,7 +6,7 @@
 ;; a `registrant` map:
 
 {:manager? true
- :course-names ["zig" "zag"]}
+ :taking-now ["zig" "zag"]}
 
 ;; It seems useful to have all the reasons why a course might be unavailable
 ;; in one place, so I added another clause to `note-unavailability`. Notice that
@@ -35,7 +35,7 @@
 (def annotate
      (fn [courses registrant instructor-count]
        (-> courses
-           (answer-annotations (:course-names registrant))
+           (answer-annotations (:taking-now registrant))
            domain-annotations
            (note-unavailability instructor-count (:manager? registrant)))))
 
