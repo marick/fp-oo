@@ -5,7 +5,11 @@
        [(filter pred sequence) (remove pred sequence)]))
 
 
-;;; Three main components
+;;; Forward declarations so that I can make the `solution` the first
+;;; function. I should probably just get into the habit of scrolling
+;;; down to look at the last function first (since it's the one that
+;;; depends on all the ones before it), but I somehow still like seeing
+;;; the most important function first.
 (declare annotate half-day-solution final-shape)
 
 (def solution
@@ -27,6 +31,11 @@
                                  (> (:registered course) 0))
                                courses)))
 
+             ;; I decided to remove the `map` expressions
+             ;; out of the different helper functions. Their
+             ;; main purpose was to shock you with unnecessarily
+             ;; nested loops as a set-up for the Laziness chapter.
+             ;; The code looks nicer without them.
              answer-annotations
              (fn [course]
                (assoc course
@@ -65,6 +74,8 @@
                (let [[guaranteed possibles] (separate :already-in? courses)]
                  (concat guaranteed (remove :unavailable? possibles))))
 
+             ;; I made sort-by-name its own function to avoid an
+             ;; ugly ((fn []...)) in the actual flow. 
              sort-by-name
              (fn [courses] (sort-by :course-name courses))]
 
