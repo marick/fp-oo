@@ -1,30 +1,4 @@
-;;; Exercise 1
-
-(def multiples
-     (fn [n] (range (* n 2) 101 n)))
-
-
-;;; Exercise 2
-
 (use 'clojure.algo.monads)
-
-
-(def nonprimes
-     (with-monad sequence-m
-       (domonad [i (range 2 11)  ; You only need to try up to the square root of 100.
-                 nonprimes (multiples i)]
-                nonprimes)))
-
-
-;;; Exercise 3
-
-(def primes
-     (remove (set nonprimes) (range 2 101)))
-(prn "Behold! Primes:")
-(prn primes)
-
-
-;;; Exercise 4
 
 (def combined-monadifier list)
 
