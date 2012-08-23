@@ -39,6 +39,9 @@
                        (helper so-far (zip/next zipper))))]
          (reverse (helper '() (zip/seq-zip tree))))))
 
+
+
+
 ;;; Exercise 2
 
 (def first-vector
@@ -56,6 +59,9 @@
 
 (prn (first-vector '(fn [a b] (concat [a] [b]))))
 (prn (first-vector '(+ 1 (* 3 4))))
+
+
+
 
 ;;; Exercise 3
 
@@ -125,3 +131,197 @@
                               :else
                               (advancing (constantly zipper))))]
          (-> form zip/seq-zip do-node zip/root))))
+
+
+
+
+;;; Exercise 4
+
+;;; In the previous version, it produced `(- 1 2)`. I think the `-` should be handled
+;;; in the normal way, which would give us `(- 1 2 55555)`.
+
+;;; For my solution, I decided to produce an alternative to `advancing`. Instead of
+;;; calling for `do-node` to work on the next node, it re-applies it to the current node.
+
+(def tumult
+     (fn [form]
+       (letfn [(advancing [flow] (-> (flow) zip/next do-node))
+               (redo [flow] (-> (flow) do-node))                ;; <<== 
+               (do-node [zipper]
+                        (cond (zip/end? zipper)
+                              zipper
+                              
+                              (at? zipper '+)
+                              (advancing (fn [] (zip/replace zipper 'PLUS)))
+
+                              (above? zipper '-)
+                              (advancing (fn [] (zip/append-child zipper 55555)))
+
+                              ;; After replacing the *, we need to back up so that
+                              ;; the - can be processed.
+                              (above? zipper '*)
+                              (redo (fn [] (zip/replace zipper '(- 1 2))))  ;; <<==
+                              
+                              (at? zipper '/)
+                              (advancing (fn []
+                                           (-> zipper
+                                               zip/right
+                                               zip/remove
+                                               zip/right
+                                               zip/remove
+                                               (zip/insert-right (-> zipper zip/right zip/node))
+                                               (zip/insert-right (-> zipper zip/right zip/right zip/node))
+                                               zip/next
+                                               do-node)))
+                              
+                              :else
+                              (advancing (constantly zipper))))]
+         (-> form zip/seq-zip do-node zip/root))))
+
+
+;;; Exercise 5
+
+;; This is an extended version that can match more than one subtree.
+(def at?
+     (fn [zipper & subtrees]
+       (not (empty? (filter (partial = (zip/node zipper)) subtrees)))))
+
+(def transform
+     (fn [form]
+       (letfn [(advancing [flow]
+                          (-> (flow) zip/next do-node))
+               (do-node [zipper]
+                        (cond (zip/end? zipper)
+                        zipper
+                        
+                        (at? zipper 'fact 'facts)
+                        (advancing (fn [] (zip/replace zipper 'do)))
+
+                        (at? zipper '=>)
+                        (advancing
+                         (fn []
+                           (let [replacement (list 'expect
+                                                   (-> zipper zip/left zip/node)
+                                                   (-> zipper zip/node)
+                                                   (-> zipper zip/right zip/node))]
+                             (-> zipper
+                                 zip/left
+                                 (zip/replace replacement)
+                                 zip/right
+                                 zip/remove
+                                 zip/next
+                                 zip/remove))))
+                        :else
+                        (advancing (constantly zipper))))]
+            (-> form zip/seq-zip do-node zip/root))))
+
+              
+
+;;; Exercise 6
+
+(def skip-to-rightmost-leaf
+     (fn [zipper]
+       (let [over (zip/rightmost zipper)]
+         (if (or (not (zip/branch? over))
+                 (empty? (zip/children over)))
+           over
+           (-> over
+               zip/down
+               skip-to-rightmost-leaf)))))
+
+
+
+;;; Exercise 7
+
+(def transform
+     (fn [form]
+       (letfn [(advancing [flow]
+                          (-> (flow) zip/next do-node))
+               (do-node [zipper]
+                        (cond (zip/end? zipper)
+                        zipper
+                        
+                        (at? zipper 'fact 'facts)
+                        (advancing (fn [] (zip/replace zipper 'do)))
+
+                        (above? zipper 'quote)
+                        ;; The following could be written like this:
+                        ;; (if (nil? (zip/right zipper))
+                        ;;   zipper
+                        ;;   (-> zipper zip/right do-node))
+                        ;; I prefer the consistency of using `advancing`.
+                        ;; In any case, in the real Midje code,
+                        ;; skip-to-rightmost-leaf is used in other
+                        ;; places.
+                        (advancing (fn [] (-> zipper zip/down skip-to-rightmost-leaf)))
+
+                        (at? zipper '=>)
+                        (advancing 
+                         (fn []
+                           (let [replacement (list 'expect
+                                                   (-> zipper zip/left zip/node)
+                                                   (-> zipper zip/node)
+                                                   (-> zipper zip/right zip/node))]
+                             (-> zipper
+                                 zip/left
+                                 (zip/replace replacement)
+                                 zip/right
+                                 zip/remove
+                                 zip/next
+                                 zip/remove))))
+                        :else
+                        (advancing (constantly zipper))))]
+            (-> form zip/seq-zip do-node zip/root))))
+
+              
+;;; Exercise 8
+
+(def transform
+     (fn [form]
+       (letfn [(advancing [flow]
+                          (-> (flow) zip/next do-node))
+               (do-node [zipper]
+                        (cond (zip/end? zipper)
+                        zipper
+                        
+                        (at? zipper 'fact 'facts)
+                        (advancing (fn [] (zip/replace zipper 'do)))
+
+                        (above? zipper 'quote)
+                        (advancing (fn [] (-> zipper zip/down skip-to-rightmost-leaf)))
+
+                        (above? zipper 'provided)
+                        (advancing
+                         (fn []
+                           (let [function-call-z (-> zipper zip/down zip/right)
+                                 arrow-z (-> function-call-z zip/right)
+                                 return-value-z (-> arrow-z zip/right)
+                                 addition (list 'fake
+                                                (zip/node function-call-z)
+                                                (zip/node arrow-z)
+                                                (zip/node return-value-z))]
+                             (-> zipper
+                                 zip/left
+                                 (zip/append-child addition)
+                                 zip/right
+                                 zip/remove))))
+
+                        (at? zipper '=>)
+                        (advancing 
+                         (fn []
+                           (let [replacement (list 'expect
+                                                   (-> zipper zip/left zip/node)
+                                                   (-> zipper zip/node)
+                                                   (-> zipper zip/right zip/node))]
+                             (-> zipper
+                                 zip/left
+                                 (zip/replace replacement)
+                                 zip/right
+                                 zip/remove
+                                 zip/next
+                                 zip/remove))))
+                        :else
+                        (advancing (constantly zipper))))]
+            (-> form zip/seq-zip do-node zip/root))))
+
+              

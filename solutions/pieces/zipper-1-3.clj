@@ -39,6 +39,9 @@
                        (helper so-far (zip/next zipper))))]
          (reverse (helper '() (zip/seq-zip tree))))))
 
+
+
+
 ;;; Exercise 2
 
 (def first-vector
@@ -56,6 +59,9 @@
 
 (prn (first-vector '(fn [a b] (concat [a] [b]))))
 (prn (first-vector '(+ 1 (* 3 4))))
+
+
+
 
 ;;; Exercise 3
 
@@ -125,3 +131,5 @@
                               :else
                               (advancing (constantly zipper))))]
          (-> form zip/seq-zip do-node zip/root))))
+
+
