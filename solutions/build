@@ -10,3 +10,4 @@ cat pieces/Y-?.clj > Y.clj
 cat pieces/function-monads*.clj > function-monads.clj
 cat pieces/scheduling-?.clj > scheduling.clj
 cat pieces/zipper-*.clj > zipper.clj
+cat pieces/build-zipper-*.clj > build-zipper.clj
