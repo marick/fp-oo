@@ -68,7 +68,7 @@
 (def solution
      (fn [s]
        (take (dec (* 2 (count s)))
-             (interleave s (replicate (count s) _)))))
+             (interleave s (replicate (count s) "_")))))
 (solution [1 3 5 7])
 
 ;; DROP and DROP-LAST
