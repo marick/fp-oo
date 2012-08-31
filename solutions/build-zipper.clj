@@ -99,11 +99,16 @@
 (def zup
      (fn [zipper]
        (let [unmodified (first (:parents zipper))]
-         (if (not (:changed zipper))
-           unmodified
-           (assoc unmodified
-               :here (concat (:lefts zipper) (list (:here zipper)) (:rights zipper))
-               :changed true)))))
+         (cond (nil? unmodified)
+               nil
+
+               (not (:changed zipper))
+               unmodified 
+
+               :else
+               (assoc unmodified
+                 :here (concat (:lefts zipper) (list (:here zipper)) (:rights zipper))
+                 :changed true)))))
 
 (def zroot
      (fn [zipper]
@@ -159,13 +164,13 @@
 
 ;; Step 3
 
-(def zend? (partial = :end))
+(def zend? :end?)
 
 (def znext
      (fn [zipper]
        (letfn [(search-up [zipper]
                   (if (nil? (zup zipper))
-                    :end
+                    (assoc zipper :end? true)
                     (or (-> zipper zup zright)
                         (-> zipper zup search-up))))]
          (or (and (zbranch? zipper)
