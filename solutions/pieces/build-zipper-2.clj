@@ -19,7 +19,10 @@
      (fn [zipper] (first (:parents zipper))));
 
 (def zroot
-     (fn [zipper] (znode (last (:parents zipper)))))
+     (fn [zipper]
+       (if (empty? (:parents zipper))
+         (znode zipper)
+         (zroot (zup zipper)))))
 
 
      

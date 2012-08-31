@@ -36,7 +36,10 @@
      (fn [zipper] (first (:parents zipper))));
 
 (def zroot
-     (fn [zipper] (znode (last (:parents zipper)))))
+     (fn [zipper]
+       (if (empty? (:parents zipper))
+         (znode zipper)
+         (zroot (zup zipper)))))
 
 
      
@@ -83,8 +86,8 @@
 
 (def zreplace
      (fn [zipper subtree]
-       (assoc zipper
-         :here subtree)))
+       (assoc zipper :here subtree)))
+
 
 
 ;;; Exercise 5
@@ -110,12 +113,15 @@
                  :here (concat (:lefts zipper) (list (:here zipper)) (:rights zipper))
                  :changed true)))))
 
+;; The earlier version of zroot already works. Here it is again:
 (def zroot
      (fn [zipper]
        (if (empty? (:parents zipper))
          (znode zipper)
          (zroot (zup zipper)))))
          
+
+
 ;;; Exercise 6
 
 ;; Step 1
@@ -131,15 +137,16 @@
 (def znext
      (fn [zipper]
        (cond (and (zbranch? zipper)
-                  (not (nil? (zdown zipper))))
-             (zdown zipper)
+                  (not (nil? (zdown zipper))))   ; (1)
+             (zdown zipper)                      ; (2)
 
              :else
              (zright zipper))))
 
-;; However, having the second `cond` form repeat the last clause of the preceding test is
-;; a hint that we should maybe take advantage of the way that boolean operations return
-;; the last value evaluated and turn the whole thing into an `or`:
+;; However, having line (2) repeat the `zdown` from line (1) is a hint
+;; that we should maybe take advantage of the way that boolean
+;; operations return the last value evaluated. That lets us turn the
+;; whole `cond` into an `or`:
 
 (def znext
      (fn [zipper]
@@ -162,7 +169,7 @@
              (search-up zipper)))))
 
 
-;; Step 3
+;; Step 4
 
 (def zend? :end?)
 

@@ -1,5 +1,5 @@
 
-;; Step 3
+;; Step 4
 
 (def zend? :end?)
 

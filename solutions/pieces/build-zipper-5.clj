@@ -21,9 +21,12 @@
                  :here (concat (:lefts zipper) (list (:here zipper)) (:rights zipper))
                  :changed true)))))
 
+;; The earlier version of zroot already works. Here it is again:
 (def zroot
      (fn [zipper]
        (if (empty? (:parents zipper))
          (znode zipper)
          (zroot (zup zipper)))))
          
+
+
