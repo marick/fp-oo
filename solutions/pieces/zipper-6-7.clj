@@ -20,38 +20,40 @@
                           (-> (flow) zip/next do-node))
                (do-node [zipper]
                         (cond (zip/end? zipper)
-                        zipper
+                              zipper
                         
-                        (at? zipper 'fact 'facts)
-                        (advancing (fn [] (zip/replace zipper 'do)))
+                              (at? zipper 'fact 'facts)
+                              (advancing (fn [] (zip/replace zipper 'do)))
 
-                        (above? zipper 'quote)
-                        ;; The following could be written like this:
-                        ;; (if (nil? (zip/right zipper))
-                        ;;   zipper
-                        ;;   (-> zipper zip/right do-node))
-                        ;; I prefer the consistency of using `advancing`.
-                        ;; In any case, in the real Midje code,
-                        ;; skip-to-rightmost-leaf is used in other
-                        ;; places.
-                        (advancing (fn [] (-> zipper zip/down skip-to-rightmost-leaf)))
+                              (above? zipper 'quote)
+                              ;; The following could be written like this:
+                              ;; (if (nil? (zip/right zipper))
+                              ;;   zipper
+                              ;;   (-> zipper zip/right do-node))
+                              ;; ... instead of using `skip-to-rightmost-leaf`. 
+                              ;; I prefer the consistency of having all the `cond`
+                              ;; clauses use `advancing`. 
+                              ;; In any case, in the real Midje code,
+                              ;; skip-to-rightmost-leaf is used in other
+                              ;; places.
+                              (advancing (fn [] (-> zipper zip/down skip-to-rightmost-leaf)))
+                              
+                              (at? zipper '=>)
+                              (advancing 
+                               (fn []
+                                 (let [replacement (list 'expect
+                                                         (-> zipper zip/left zip/node)
+                                                         (-> zipper zip/node)
+                                                         (-> zipper zip/right zip/node))]
+                                   (-> zipper
+                                       zip/left
+                                       (zip/replace replacement)
+                                       zip/right
+                                       zip/remove
+                                       zip/next
+                                       zip/remove))))
+                              :else
+                              (advancing (constantly zipper))))]
+         (-> form zip/seq-zip do-node zip/root))))
 
-                        (at? zipper '=>)
-                        (advancing 
-                         (fn []
-                           (let [replacement (list 'expect
-                                                   (-> zipper zip/left zip/node)
-                                                   (-> zipper zip/node)
-                                                   (-> zipper zip/right zip/node))]
-                             (-> zipper
-                                 zip/left
-                                 (zip/replace replacement)
-                                 zip/right
-                                 zip/remove
-                                 zip/next
-                                 zip/remove))))
-                        :else
-                        (advancing (constantly zipper))))]
-            (-> form zip/seq-zip do-node zip/root))))
 
-              

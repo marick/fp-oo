@@ -17,20 +17,6 @@
      (fn [tree]
        (reverse (flatten-zipper '() (zip/seq-zip tree)))))
      
-(def flattenize-2
-     (fn [tree]
-       (letfn [(helper [so-far zipper]
-                 (cond (zip/end? zipper)
-                       so-far
-                       
-                       (zip/branch? zipper)
-                       (helper so-far (zip/next zipper))
-                       
-                       :else
-                       (helper (cons (zip/node zipper) so-far)
-                               (zip/next zipper))))]
-         (reverse (helper '() (zip/seq-zip tree))))))
-
 (def tumult-just-plus
      (fn [form]
        (letfn [(helper [zipper]

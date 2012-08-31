@@ -2,8 +2,8 @@
 
 ;;; Exercise 4
 
-;;; In the previous version, it produced `(- 1 2)`. I think the `-` should be handled
-;;; in the normal way, which would give us `(- 1 2 55555)`.
+;;; In the my first solution to this exercise, it produced `(- 1 2)`. I think the `-` should
+;;; then be recursively handled by `tumult`, which would give us `(- 1 2 55555)`.
 
 ;;; For my solution, I decided to produce an alternative to `advancing`. Instead of
 ;;; calling for `do-node` to work on the next node, it re-applies it to the current node.

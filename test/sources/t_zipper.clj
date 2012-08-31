@@ -4,8 +4,7 @@
 (load-file "sources/zipper-text.clj")
 
 (fact
-  (flattenize '(1 [2 3] 4 (5 (6 (7))))) => '(1 [2 3] 4 5 6 7)
-  (flattenize-2 '(1 [2 3] 4 (5 (6 (7))))) => '(1 [2 3] 4 5 6 7))
+  (flattenize '(1 [2 3] 4 (5 (6 (7))))) => '(1 [2 3] 4 5 6 7))
 
 (fact
   (tumult-just-plus '(- ( (+ 3)))) => '(- ( (PLUS 3)))
@@ -16,6 +15,9 @@
 
 
 (load-file "sources/zipper.clj")
+
+(fact
+  (flattenize '(1 [2 3] 4 (5 (6 (7))))) => '(1 [2 3] 4 5 6 7))
 
 (fact
   (tumult '(* 1 2)) => '(/ (PLUS 3 (- 0 9999 55555)) 1)
