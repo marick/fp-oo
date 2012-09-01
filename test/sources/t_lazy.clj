@@ -9,3 +9,7 @@
   (type (rrange 0 10)) => clojure.lang.LazySeq
   (type (rest (rrange 0 10))) => clojure.lang.LazySeq
   (first (rrange 1 10)) => 1)
+
+(fact
+  filter =not=> eager?
+  rrange =not=> eager?)
