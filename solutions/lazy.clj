@@ -38,6 +38,3 @@
 
              :else
              (eager-filter predicate? (rest sequence)))))
-
-
-

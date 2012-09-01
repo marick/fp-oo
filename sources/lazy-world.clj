@@ -6,7 +6,7 @@
         (new java.io.BufferedReader *in*))))
 
 
-;;; 
+;;; For exercise 3
 
 (def counted-sum
      (fn [number-count numbers]

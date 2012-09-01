@@ -6,7 +6,7 @@
 (defpatterned count-sequence
   [so-far [           ] ] so-far
   [so-far [head & tail] ] (count-sequence (inc so-far) tail)
-  [sequence             ] (count-sequence 0 sequence))
+  [      sequence       ] (count-sequence 0 sequence))
 
 ;;; Exercise 2
 
@@ -16,7 +16,5 @@
 
   [function so-far [head & tail]]
   (pattern-reduce function (function so-far head) tail))
-
-;;; Exercise 3
 
 
