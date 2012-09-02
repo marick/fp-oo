@@ -53,14 +53,14 @@
 ;; Notice that we can put symbols in these lists because the quote
 ;; prevents them from being evaluated.
 
-;; REPLICATE
+;; REPEAT
 ;; Given a list L. Suppose its third and fifth elements are
 ;; A and B. Produce this list:
 ;;    ( (A B) (A B) (A B) (A B) )
 
 (def solution
      (fn [L]
-       (replicate 4 (list (nth L 2) (nth L 4)))))
+       (repeat 4 (list (nth L 2) (nth L 4)))))
 (solution '(_ _ A _ B _ _))
 
 ;; INTERLEAVE
@@ -68,7 +68,7 @@
 (def solution
      (fn [s]
        (take (dec (* 2 (count s)))
-             (interleave s (replicate (count s) '_)))))
+             (interleave s (repeat (count s) '_)))))
 (solution [1 3 5 7])
 
 ;; DROP and DROP-LAST
@@ -114,7 +114,7 @@
      (fn [seq]
        (map drop
             (range (inc (count seq)))
-            (replicate (inc (count seq)) seq))))
+            (repeat (inc (count seq)) seq))))
 
 ;;; Exercise 8:
 
