@@ -76,3 +76,29 @@
   (get @dispatch-functions 'collide) => nil
   (get @specializations 'collide) => nil)
 
+;;; The default generic function uses the type of the first element.
+
+(derive ::hash-map ::abstract-map)
+
+
+(defgeneric to-string)
+(defspecialized to-string ::abstract-map [this] "a map of some sort")
+
+(defgeneric get-element)
+(defspecialized get-element ::abstract-map [this key] (get this key))
+
+
+(fact
+  (to-string (with-meta {} {:type ::hash-map})) => "a map of some sort"
+  (get-element (with-meta {:a 1} {:type ::hash-map}) :a) => 1)
+
+
+
+
+(defgeneric true-false odd?)
+(defspecialized true-false true [_] "odd")
+(defspecialized true-false false [_] "even")
+
+(fact "function names can be used"
+  (true-false 1) => "odd"
+  (true-false 2) => "even")

@@ -4,14 +4,17 @@
 (def specializations (atom {}))
 
 
+(defn function-form
+  ([] `(fn [& args#] (type (first args#))))
+  ([function] function)
+  ([params & body] `(fn ~params ~@body)))
 
-
-(defmacro defgeneric [name params & body]
+(defmacro defgeneric [name & rest]
   (ns-unmap *ns* name)
   (let [specializations-to-rerun (@specializations name)]
     (swap! specializations dissoc name)
     `(do
-       (let [dispatch-function# (fn ~params ~@body)]
+       (let [dispatch-function# ~(apply function-form rest)]
          (defmulti ~name dispatch-function#)
          (swap! dispatch-functions assoc '~name dispatch-function#)
          ~@specializations-to-rerun
@@ -34,3 +37,6 @@
   (swap! dispatch-functions dissoc symbol)
   (swap! specializations dissoc symbol)
   symbol)
+
+
+
