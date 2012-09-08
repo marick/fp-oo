@@ -11,3 +11,5 @@ cat pieces/function-monads*.clj > function-monads.clj
 cat pieces/scheduling-?.clj > scheduling.clj
 cat pieces/zipper-*.clj > zipper.clj
 cat pieces/build-zipper-*.clj > build-zipper.clj
+cat pieces/asteroids-*.clj > asteroids.clj
+cat pieces/shapely-?.clj > shapely.clj

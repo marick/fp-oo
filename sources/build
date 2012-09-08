@@ -1,1 +1,2 @@
+cat pieces/asteroids-*.clj > asteroids.clj
 
