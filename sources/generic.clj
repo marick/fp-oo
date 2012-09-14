@@ -1,27 +1,21 @@
 
 
-(def dispatch-functions (atom {}))
+(def classifiers (atom {}))
 (def specializations (atom {}))
 
 
-(defn function-form
-  ([] `(fn [& args#] (type (first args#))))
-  ([function] function)
-  ([params & body] `(fn ~params ~@body)))
-
-(defmacro defgeneric [name & rest]
+(defmacro defgeneric [name classifier]
   (ns-unmap *ns* name)
   (let [specializations-to-rerun (@specializations name)]
     (swap! specializations dissoc name)
     `(do
-       (let [dispatch-function# ~(apply function-form rest)]
-         (defmulti ~name dispatch-function#)
-         (swap! dispatch-functions assoc '~name dispatch-function#)
+       (defmulti ~name ~classifier)
+         (swap! classifiers assoc '~name ~classifier)
          ~@specializations-to-rerun
-         '~name))))
+         '~name)))
      
 
-(defmacro defspecialized [name selector args & body]
+(defmacro defspecialized [name selector [_ args & body]]
   (swap! specializations
          (fn [current-map]
            (merge-with concat current-map {name [&form]})))
@@ -30,11 +24,11 @@
      '~name))
 
 (defn dispatch-value [symbol & args]
-  (apply ((deref dispatch-functions) symbol) args))
+  (apply ((deref classifiers) symbol) args))
 
 (defn forget [symbol]
   (ns-unmap *ns* symbol)
-  (swap! dispatch-functions dissoc symbol)
+  (swap! classifiers dissoc symbol)
   (swap! specializations dissoc symbol)
   symbol)
 

@@ -7,27 +7,29 @@
 (defn asteroid [name] (with-meta {:name name} {:type ::asteroid}))
 
 
-(defgeneric collide [thing1 thing2]
-  [(type thing1) (type thing2)])
+(defgeneric collide
+  (fn [thing1 thing2]
+    [(type thing1) (type thing2)]))
 
 (defspecialized collide [::ship ::ship]
-  [& args]
-  "ships")
+  (fn [& args]
+    "ships"))
 
 (fact "defgeneric and defspecialized are synonyms"
   (collide (ship "Space Beagle") (ship  "Rim Griffon")) => "ships")
 
 
-(defgeneric collide [thing1 thing2]
-  (sort [(type thing1) (type thing2)]))
+(defgeneric collide
+  (fn [thing1 thing2]
+    (sort [(type thing1) (type thing2)])))
 
 (fact "old specializations still work"
   (collide (ship "Space Beagle") (ship  "Rim Griffon")) => "ships")
 
 
 (defspecialized collide [::asteroid ::ship]
-  [& args]
-  "mix")
+  (fn [& args]
+    "mix"))
 
 (fact "defgeneric redefinitions work"
   (collide (ship "Space Beagle") (asteroid  "Ceres")) => "mix")
@@ -36,11 +38,12 @@
 
 ;; Another generic function does no harm.
 
-(defgeneric pcount [number] number)
+(defgeneric pcount
+  (fn [number] number))
 
-(defspecialized pcount 1 [number] "one")
-(defspecialized pcount 2 [number] "two")
-(defspecialized pcount :default [number] number)
+(defspecialized pcount 1 (fn [number] "one"))
+(defspecialized pcount 2 (fn [number] "two"))
+(defspecialized pcount :default (fn [number] number))
 
 (fact "new stuff works"
   (pcount 1) => "one"
@@ -55,8 +58,8 @@
 ;;; Can redefine specialized function
 
 (defspecialized collide [::asteroid ::ship]
-  [& args]
-  "new mix")
+  (fn [& args]
+    "new mix"))
 
 (fact "old stuff still works"
   (collide (ship "Space Beagle") (asteroid  "Ceres")) => "new mix"
@@ -73,31 +76,13 @@
 (forget 'collide)
 (fact
   (resolve 'collide) => nil
-  (get @dispatch-functions 'collide) => nil
+  (get @classifiers 'collide) => nil
   (get @specializations 'collide) => nil)
-
-;;; The default generic function uses the type of the first element.
-
-(derive ::hash-map ::abstract-map)
-
-
-(defgeneric to-string)
-(defspecialized to-string ::abstract-map [this] "a map of some sort")
-
-(defgeneric get-element)
-(defspecialized get-element ::abstract-map [this key] (get this key))
-
-
-(fact
-  (to-string (with-meta {} {:type ::hash-map})) => "a map of some sort"
-  (get-element (with-meta {:a 1} {:type ::hash-map}) :a) => 1)
-
-
 
 
 (defgeneric true-false odd?)
-(defspecialized true-false true [_] "odd")
-(defspecialized true-false false [_] "even")
+(defspecialized true-false true (fn [_] "odd"))
+(defspecialized true-false false (fn [_] "even"))
 
 (fact "function names can be used"
   (true-false 1) => "odd"
