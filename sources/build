@@ -1,1 +1,2 @@
 
+cat pieces/javascript-*.clj > javascript.clj
