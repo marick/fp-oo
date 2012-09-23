@@ -3,7 +3,7 @@
 
 (load-file "solutions/javascript.clj")
 
-
+;;; Exercise 1
 
 (fact "js-apply"
   (js-apply (make-function (fn [x] [this x]))
@@ -50,15 +50,39 @@
 
 (fact (send-to point :get-x) => 1)
 
-(load-file "sources/pieces/javascript-3.clj")
-
-(fact "make-function"
-  (make-function identity) => {:__function__ identity }
-  (make-function identity :key :value) => {:__function__ identity, :key :value})
-
-(load-file "sources/pieces/javascript-4.clj")
 
 
-(def this {})
+;;; Exercise 2
+
+(def ^:dynamic this {})
 (fact "Function constructor"
-  (Function identity :key :value) => (make-function identity :key :value))
+  (js-new Function identity :key :value) => (make-function identity :key :value))
+
+(def Point
+     (js-new Function
+             (fn [x y]
+               (assoc this :x x, :y y))))
+
+(fact (js-new Point 1 2) => {:y 2, :x 1})
+
+(def Point
+     (js-new Function
+             (fn [x y]
+               (assoc this :x x, :y y))
+             :a-property-for-Point 5))
+(fact
+  Point => (contains {:a-property-for-Point 5})
+  (js-new Point 1 2) => {:y 2, :x 1})
+
+(def Point (js-call Function
+                    ;; Function, do your thing with the following as `this`:
+                    {:a-property-for-Point 5}
+                    ;; Function, here is the Clojure function to use:
+                    (fn [x y] (assoc this :x x :y y))
+                    ;; Here are properties to add to the resulting `Point`:
+                    :another-property "here"))
+
+(fact
+  Point => (contains {:a-property-for-Point 5 :another-property "here"})
+  (js-new Point 1 2) => {:y 2, :x 1})
+
