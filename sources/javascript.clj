@@ -28,11 +28,22 @@
 
 
 
-;;; Here are some test cases. With the following definition of
-;;; `make-function`, they work even the exercise code changes.
-;;; Your job is to make them work after.
+;;; For Exercise 1
 
-(def make-function identity)
+;;; This function (from the text) will be used to bootstrap the
+;;; replacement of Clojure functions with Javascript Functions:
+
+(def make-function 
+     (fn [fn-value & property-pairs]
+       (prn "FOOOO" fn-value property-pairs)
+       (merge {:__function__ fn-value}
+              (apply hash-map property-pairs))))
+
+;; Here are some test cases to use with the new `make-function` after
+;; you implement the new `js-apply`. (Note that they're wrapped in a
+;; `comment` form so they don't execute within this file.
+
+(comment
 
 ;; js-apply
 (println (js-apply (make-function (fn [x] [this x]))
@@ -76,25 +87,4 @@
 
 (println (send-to point :get-x))
 
-
-
-;;; For Exercise 1
-;;; This function will be used to bootstrap the replacement
-;;; of Clojure functions with Javascript Functions:
-
-(def make-function 
-     (fn [fn-value & property-pairs]
-       (merge {:__function__ fn-value}
-              (apply hash-map property-pairs))))
-
-
-
-;;; For Exercise 2
-
-;;; This is a Function constructor that doesn't work. 
-
-(def Function
-     (fn [fn-value & property-pairs]
-       (merge this
-              {:__function__ fn-value}
-              (apply hash-map property-pairs))))
+)

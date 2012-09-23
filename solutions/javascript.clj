@@ -9,8 +9,8 @@
 
 ;;; Exercise 2
 (def Function
-     (make-function (fn [fn-value & property-pairs]
-                      (merge this
-                             {:__function__ fn-value}
-                             (apply hash-map property-pairs)))))
+     (make-function
+      (fn [fn-value & property-pairs]
+        (merge this
+               (apply make-function fn-value property-pairs)))))
     
