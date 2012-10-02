@@ -1,8 +1,9 @@
-(ns sources.t-javascript
+(ns solutions.ts-javascript
   (:use midje.sweet)
   (:use clojure.pprint))
 
 (load-file "sources/javascript.clj")
+(load-file "solutions/javascript-complete.clj")
 
 (def root (generic-object :up "up"
                           :obscured "obscured"))
@@ -46,14 +47,11 @@
 ;;; The function object
 
 (fact "Function is unique in that its __proto__ and prototype are the same"
-  (dot-call (dot Function :prototype) :call) => "see exercises"
-  (dot-call (dot Function :__proto__) :call) => "see exercises")
+  (dot (dot Function :prototype) :call) => (dot (dot Function :__proto__) :call))
 
 (fact "The Function prototype is in the __proto__ chain for all functions"
-  (dot-call Function :call) => "see exercises"
-  (dot-call Point :call) => "see exercises"
-  (dot-call Function :apply) => "see exercises"
-  (dot-call Point :apply) => "see exercises")
+  (dot Function :call) => (:call (:__proto__ Function))
+  (dot Point :call) => (dot Function :call))
 
 (fact "functions in the Function prototype have usable __proto__ chains"
   (dot (dot Function :call) :glorp) => :undefined)
@@ -63,7 +61,7 @@
                          (fn [x] (assoc *context-object* :magnitude x
                                                          :documentation "a Magnitude"))
                          :documentation "Make a Magnitude"))
-  (dot-call Magnitude :call) => "see exercises"
+  (dot Magnitude :call) => (dot Function :call)
   (dot Magnitude :documentation) => "Make a Magnitude"
   (let [magnitude (js-new Magnitude 3)]
     (dot magnitude :magnitude) => 3
@@ -71,9 +69,24 @@
     (dot magnitude :call) => :undefined
     (dot magnitude :prototype) => :undefined
     (dot magnitude :documentation) => "a Magnitude"))
-  
+
 
 ;;; Point
+
+(fact "Mimics of Function can use `call` and `apply`."
+  (let [object (generic-object :value 5)
+        adder (js-new Function (fn [x] (+ (dot *context-object* :value) x)))]
+    (dot-call adder :apply object [2]) => 7
+    (dot-call adder :call object 2) => 7)
+
+  (let [point (js-new Point 1 2)
+        shift (dot point :shift)]
+    (dot-call shift :call point 100 200) => (js-new Point 101 202)
+    (dot-call shift :apply point [100 200]) => (js-new Point 101 202)))
+  
+    
+
+
 
 (fact
   (:__proto__ Point) => (dot Function :prototype)
@@ -89,17 +102,4 @@
     (dot point :y) => 2
     (dot shifted :x) => 101
     (dot shifted :y) => 202))
-
-;; ColoredPoint
     
-(fact "js-new works"
-  (let [point (js-new ColoredPoint 1 2 "red")
-        shifted (dot-call point :shift 100 200)]
-    (dot point :x) => 1
-    (dot point :y) => 2
-    (dot point :color) => "red"
-    (dot shifted :x) => 101
-    (dot shifted :y) => 202
-    (dot shifted :color) => "red"))
-    
-
