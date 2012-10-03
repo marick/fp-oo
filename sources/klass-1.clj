@@ -87,10 +87,6 @@
        (apply-message-to (class-from-instance instance)
                          instance message args)))
 
-(def send-super
-     (fn [instance message & args]
-       (apply-message-to (superclass-from-instance instance)
-                         instance message args)))
 
 
 ;;; The two class/pairs from which everything else can be built

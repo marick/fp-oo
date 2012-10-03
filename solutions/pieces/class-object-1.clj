@@ -53,8 +53,6 @@
 
 ;; Does a method-missing override work?
 ; (send-to (a MissingOverrider) :queen-bee "Dawn")
-;; Does method-missing get called when `send-super` is incorrectly used?
-; (send-to (a SuperSender) :overrides-nothing)
 
 
 ;;; Exercise 2

@@ -72,9 +72,11 @@
           
           :to-string
           (fn [this]
-            (cl-format nil "A ~A like this: ~A"
+            (cl-format nil "A ~A like this: [~A, ~A]"
                        (send-to this :class-name)
-                       (send-super this :to-string)))
+                       (send-to this :x)
+                       (send-to this :y)))
+
           :shift
           (fn [this xinc yinc]
             (let [my-class (send-to this :class)]

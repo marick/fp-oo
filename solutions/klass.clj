@@ -73,8 +73,10 @@
          
           :add-instance-values
           (fn [this x y color]
-            (assoc (send-super this :add-instance-values x y)
-              :color color))
+            ;; This is a hack because we haven't implemented
+            ;; `send-super` yet.
+            (merge (send-to Point :new x y)
+                   (assoc this :color color)))
          }
          {
           :origin (fn [class]

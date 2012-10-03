@@ -96,11 +96,6 @@
        (apply-message-to (left-from-instance instance)
                          instance message args)))
 
-(def send-super
-     (fn [instance message & args]
-       (apply-message-to (left-up-from-instance instance)
-                         instance message args)))
-
 ;;; The two class/pairs from which everything else can be built
 
 ;; Anything

@@ -208,14 +208,14 @@
 
 ;;; How about send-super?
 
-(send-to Module :new 'T1
-         {:sup (fn [this] ["T1" (send-super this :sup)])})
+;; (send-to Module :new 'T1
+;;          {:sup (fn [this] ["T1" (send-super this :sup)])})
 
-(send-to Module :new 'T2
-         {:sup (fn [this] ["T2" (send-super this :sup)])})
+;; (send-to Module :new 'T2
+;;          {:sup (fn [this] ["T2" (send-super this :sup)])})
 
-(send-to Module :new 'T1-1
-         {:sup (fn [this] ["T1-1"])})
+;; (send-to Module :new 'T1-1
+;;          {:sup (fn [this] ["T1-1"])})
 
 (future-fact "send-super works with modules"
   (send-to cyclops :sup) => ["T2" ["T1" ["T1-1"]]])

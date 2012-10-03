@@ -1,4 +1,4 @@
-(declare class-from-instance send-to send-super apply-message-to)
+(declare class-from-instance send-to apply-message-to)
 ;; This imports a function from another namespace. (Think package or module.)
 (use '[clojure.pprint :only [cl-format]])
 
@@ -62,10 +62,11 @@
            (send-to this :shift (:x other)
                                 (:y other)))
     :to-string
-    (fn [this]
-      (cl-format nil "A ~A like this: ~A"
-                 (send-to this :class-name)
-                 (send-super this :to-string)))
+     (fn [this]
+       (cl-format nil "A ~A like this: [~A, ~A]"
+                       (send-to this :class-name)
+                       (send-to this :x)
+                       (send-to this :y)))
    }
  })
 
@@ -122,11 +123,6 @@
 (def send-to
      (fn [instance message & args]
        (apply-message-to (class-from-instance instance)
-                         instance message args)))
-
-(def send-super
-     (fn [instance message & args]
-       (apply-message-to (superclass-from-instance instance)
                          instance message args)))
 
 
