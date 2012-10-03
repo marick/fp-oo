@@ -12,3 +12,4 @@ cat pieces/scheduling-?.clj > scheduling.clj
 cat pieces/zipper-*.clj > zipper.clj
 cat pieces/build-zipper-*.clj > build-zipper.clj
 cat pieces/modules-?.clj > modules.clj
+cat pieces/class-object-?.clj > class-object.clj
