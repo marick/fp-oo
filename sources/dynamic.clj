@@ -69,11 +69,6 @@
        (assert (map? instance))
        (eval (:__left_symbol__ instance))))
 
-(def left-up-from-instance
-     (fn [instance]
-       (assert (map? instance))
-       (eval (:__up_symbol__ (left-from-instance instance)))))
-
 
 ;; Core dispatch function
 
@@ -109,10 +104,7 @@
        (let [method (message (method-cache method-holder))]
          (if method
            (binding [this instance] (apply method args))
-           (send-to instance :method-missing message args))))
-)
-
-
+           (send-to instance :method-missing message args)))))
 
 ;;; The public interface
 
