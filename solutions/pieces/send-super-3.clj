@@ -8,8 +8,7 @@
 ;; and `send-super`.  I don't like the duplication, nor that the
 ;; binding needed for `send-super` is done in `send-super`, but the
 ;; binding needed for `send-to` is done in the helper function
-;; `apply-message-to`. But this solution is easy to follow as just a small change from
-;; what came before.
+;; `apply-message-to`. Later exercises will deal with this problem.
 
 (def apply-message-to
      (fn [method-holder instance message args]

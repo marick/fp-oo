@@ -13,3 +13,5 @@ cat pieces/zipper-*.clj > zipper.clj
 cat pieces/build-zipper-*.clj > build-zipper.clj
 cat pieces/modules-?.clj > modules.clj
 cat pieces/class-object-?.clj > class-object.clj
+cat pieces/send-super-?.clj > send-super.clj
+cat pieces/message-class-?.clj > message-class.clj
