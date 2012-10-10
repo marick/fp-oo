@@ -68,7 +68,6 @@
      (fn [candidate]
        (zero? (rem (check-sum (reversed-digits candidate)) 11))))
 
-
 ;;; 10
 
 (def check-sum
