@@ -1,8 +1,8 @@
 (use 'clojure.algo.monads)
 
 (def sequence-monad-decider
-     (fn [step-value continuation]
-       (mapcat continuation step-value)))
+     (fn [step-value monadic-continuation]
+       (mapcat monadic-continuation step-value)))
 
 (def sequence-monad-monadifier list)
 

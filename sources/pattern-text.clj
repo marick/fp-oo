@@ -31,13 +31,13 @@
   [n]  (* n (factorial-3 (dec n))))
 
 (defpatterned factorial-4
-  [(:when (partial > 0) :bind n)] (oops! "No negative numbers" :n n)
+  [(:when neg? :bind n)] (oops! "No negative numbers" :n n)
   [0]  1
   [1]  1
   [n]  (* n (factorial-4 (dec n))))
 
 (defpatterned factorial-5
-  [(:when (partial > 0) :bind n)] (oops! "No negative numbers" :n n)
+  [(:when neg? :bind n)] (oops! "No negative numbers" :n n)
   [(:in [0 1])]  1
   [n]            (* n (factorial-5 (dec n))))
 

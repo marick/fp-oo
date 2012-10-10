@@ -6,9 +6,9 @@
                (fn [] binding-value))
 
              m-bind
-             (fn [monadic-value continuation]
+             (fn [monadic-value monadic-continuation]
                (let [binding-value (monadic-value)]
-                 (continuation binding-value)))]))
+                 (monadic-continuation binding-value)))]))
 
 (def calculation
      (with-monad function-monad
@@ -27,11 +27,11 @@
                  {:charge charge, :result result}))
 
              m-bind
-             (fn [monadic-value continuation]
+             (fn [monadic-value monadic-continuation]
                (fn [charge]
                  (let [enclosed-map (monadic-value charge)
                        binding-value (:result enclosed-map)]
-                   ( (continuation binding-value)
+                   ( (monadic-continuation binding-value)
                      (inc charge)))))]))
 
 (def run-and-charge
@@ -56,14 +56,14 @@
                  {:charge charge, :result result}))
 
              m-bind
-             (fn [monadic-value continuation]
+             (fn [monadic-value monadic-continuation]
                (cl-format true "Making a decision.~%")
                (fn [charge]
                  (let [enclosed-map (monadic-value charge)
                        binding-value (:result enclosed-map)]
                    (cl-format true "Calling continuation with ~A~%" binding-value)
                    (cl-format true "... The charge to increment is ~A~%", charge)
-                   ( (continuation binding-value)
+                   ( (monadic-continuation binding-value)
                      (inc charge)))))]))
 
 (println "==========")
@@ -90,12 +90,12 @@
                  {:state state, :result result}))
 
              m-bind
-             (fn [monadic-value continuation]
+             (fn [monadic-value monadic-continuation]
                (fn [state]
                  (let [enclosed-map (monadic-value state)
                        binding-value (:result enclosed-map)
                        new-state (:state enclosed-map)]
-                   (  (continuation binding-value) new-state))))]))
+                   (  (monadic-continuation binding-value) new-state))))]))
 
 (def get-state
      (fn []

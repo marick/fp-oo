@@ -3,12 +3,12 @@
 (def combined-monadifier list)
 
 (def combined-decider
-     (fn [monadic-value continuation]
+     (fn [monadic-value monadic-continuation]
        (let [maybe-ified-continuation
              (fn [binding-value]
                (if (nil? binding-value)
                  (combined-monadifier binding-value)
-                 (continuation binding-value)))]
+                 (monadic-continuation binding-value)))]
          (mapcat maybe-ified-continuation monadic-value))))
 
 (defmonad combined-monad

@@ -5,8 +5,8 @@
 
 ;;; Objects of interest
 (def make
-     (fn [type values]
-       (with-meta values {:type type})))
+     (fn [type value-map]
+       (with-meta value-map {:type type})))
 
 (def rim-griffon (make ::starship {:name "Rim Griffon", :speed 1000}))
 (def malse (make ::asteroid {:name "Malse", :speed 0.1, :gravitational-pull 0.5}))
@@ -19,7 +19,7 @@
 ;;; OO-style single arguments
 
 (def oo-style 
-  (fn [& args] (type (first args))))
+  (fn [this & args] (type this)))
 
 ;; Nudge
 (defgeneric nudge oo-style)
