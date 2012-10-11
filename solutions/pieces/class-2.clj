@@ -12,15 +12,15 @@
     :class (fn [this] (class-from-instance this))
     ;;                                   ^^^^^== New
     :shift (fn [this xinc yinc]
-             (a Point (+ (:x this) xinc)
-                      (+ (:y this) yinc)))
+             (make Point (+ (:x this) xinc)
+                         (+ (:y this) yinc)))
     :add (fn [this other]
            (send-to this :shift (:x other)
                                 (:y other)))
    }
  })
 
-(prn (send-to (a Point 1 2) :class-name))
-(prn (send-to (a Point 1 2) :class))
+(send-to (make Point 1 2) :class-name)
+(send-to (make Point 1 2) :class)
 
 

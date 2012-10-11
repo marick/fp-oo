@@ -2,7 +2,7 @@
 ;;; no value, which allows you to write code that uses functions you
 ;;; haven't defined yet. I'm using this so that this code can
 ;;; (roughly) match the order of the book.
-(declare class-from-instance send-to a)
+(declare class-from-instance send-to make)
 
 (def Anything
 {
@@ -24,8 +24,8 @@
     :add-instance-values (fn [this x y]
                            (assoc this :x x :y y))
     :shift (fn [this xinc yinc]
-             (a Point (+ (:x this) xinc)
-                      (+ (:y this) yinc)))
+             (make Point (+ (:x this) xinc)
+                         (+ (:y this) yinc)))
     :add (fn [this other]
            (send-to this :shift (:x other)
                                 (:y other)))
@@ -74,7 +74,7 @@
          (apply (message (method-cache class))
                 instance args)))
 
-(def a
+(def make
      (fn [class & args]
        (let [seeded {:__class_symbol__ (:__own_symbol__ class)}]
          (apply-message-to class seeded :add-instance-values args))))

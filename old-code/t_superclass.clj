@@ -11,7 +11,7 @@
   (keys (class-instance-methods 'Point)) =not=> (contains :class))
 
 (fact
-  (class-from-instance (a Point 1 2)) => Point)
+  (class-from-instance (make Point 1 2)) => Point)
 
 (fact
   (lineage 'Anything) => ['Anything]
@@ -24,13 +24,13 @@
   => (exactly (:add-instance-values (class-instance-methods 'Point))))
 
 (fact
-  (apply-message-to Point (a Point 1 2) :class-name '()) => 'Point
-  (apply-message-to Point (a Point 1 2) :shift '(1 2)) => (a Point 2 4))
+  (apply-message-to Point (make Point 1 2) :class-name '()) => 'Point
+  (apply-message-to Point (make Point 1 2) :shift '(1 2)) => (make Point 2 4))
 
 (fact
-  (send-to (a Point 1 2) :add (a Point 2 1)) => (a Point 3 3)
-  (send-to (a Point 1 2) :class) => Point
-  (send-to (a Anything) :class) => Anything)
+  (send-to (make Point 1 2) :add (make Point 2 1)) => (make Point 3 3)
+  (send-to (make Point 1 2) :class) => Point
+  (send-to (make Anything) :class) => Anything)
 
 
 

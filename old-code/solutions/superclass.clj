@@ -11,12 +11,13 @@
      (fn [instance message & args]
        (apply-message-to (superclass-from-instance instance)
                          instance message args)))
-(prn (send-to (a Point 1 2) :to-string))
+
+(send-to (make Point 1 2) :to-string)
 
 
 ;;; Exercise 2
 
-(send-to (a SubClass 1 2) :summer 3)
+(send-to (make SubClass 1 2) :summer 3)
 
 
 ;;; Exercise 3
@@ -73,6 +74,6 @@
 
 
 ;; Does a method-missing override work?
-; (send-to (a MissingOverrider) :queen-bee "Dawn")
+(send-to (make MissingOverrider) :queen-bee "Dawn")
 ;; Does method-missing get called when `send-super` is incorrectly used?
-; (send-to (a SuperSender) :overrides-nothing)
+(send-to (make SuperSender) :overrides-nothing)

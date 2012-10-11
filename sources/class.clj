@@ -1,4 +1,4 @@
-(def a
+(def make
      (fn [class & args]
        (let [seeded {:__class_symbol__ (:__own_symbol__ class)}
              constructor  (:add-instance-values (:__instance_methods__ class))]
@@ -20,8 +20,8 @@
                            (assoc this :x x :y y))
     :class :__class_symbol__
     :shift (fn [this xinc yinc]
-             (a Point (+ (:x this) xinc)
-                      (+ (:y this) yinc)))
+             (make Point (+ (:x this) xinc)
+                         (+ (:y this) yinc)))
     :add (fn [this other]
            (send-to this :shift (:x other)
                                 (:y other)))

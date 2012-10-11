@@ -1,7 +1,7 @@
 ;;; Exercise 3
 
 
-(def my-point (a Point 1 2))
+(def my-point (make Point 1 2))
 
 (def Point
 {
@@ -11,20 +11,20 @@
     :add-instance-values (fn [this x y]
                            (assoc this :x x :y y))
     ;;                                   vvvvv== New
-    :origin (fn [this] (a Point 0 0))
+    :origin (fn [this] (make Point 0 0))
     ;;                                   ^^^^^== New
     :class-name :__class_symbol__    
     :class (fn [this] (class-from-instance this))
     :shift (fn [this xinc yinc]
-             (a Point (+ (:x this) xinc)
-                      (+ (:y this) yinc)))
+             (make Point (+ (:x this) xinc)
+                         (+ (:y this) yinc)))
     :add (fn [this other]
            (send-to this :shift (:x other)
                                 (:y other)))
    }
  })
 
-(prn (send-to my-point :origin))
+(send-to my-point :origin)
 
 ;; Redefining a class changes the behavior of existing instances
 ;; because having an instance's :__class_symbol__ be a symbol that's

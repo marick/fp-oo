@@ -13,7 +13,7 @@
        (apply (method-from-message message class)
               instance args)))
 
-(def a
+(def make
      (fn [class & args]
        (let [seeded {:__class_symbol__ (:__own_symbol__ class)}]
          (apply-message-to class seeded :add-instance-values args))))
@@ -24,8 +24,8 @@
                          instance message args)))
 
 ;; For example:
-(prn (send-to (a Point 1 2) :class))
-(prn (send-to (a Point 1 2) :shift -1 -2))
+(prn (send-to (make Point 1 2) :class))
+(prn (send-to (make Point 1 2) :shift -1 -2))
 
 ;;; Exercise 2
 
@@ -41,22 +41,22 @@
     :class (fn [this] (class-from-instance this))
     ;;                                   ^^^^^== New
     :shift (fn [this xinc yinc]
-             (a Point (+ (:x this) xinc)
-                      (+ (:y this) yinc)))
+             (make Point (+ (:x this) xinc)
+                         (+ (:y this) yinc)))
     :add (fn [this other]
            (send-to this :shift (:x other)
                                 (:y other)))
    }
  })
 
-(prn (send-to (a Point 1 2) :class-name))
-(prn (send-to (a Point 1 2) :class))
+(send-to (make Point 1 2) :class-name)
+(send-to (make Point 1 2) :class)
 
 
 ;;; Exercise 3
 
 
-(def my-point (a Point 1 2))
+(def my-point (make Point 1 2))
 
 (def Point
 {
@@ -66,20 +66,20 @@
     :add-instance-values (fn [this x y]
                            (assoc this :x x :y y))
     ;;                                   vvvvv== New
-    :origin (fn [this] (a Point 0 0))
+    :origin (fn [this] (make Point 0 0))
     ;;                                   ^^^^^== New
     :class-name :__class_symbol__    
     :class (fn [this] (class-from-instance this))
     :shift (fn [this xinc yinc]
-             (a Point (+ (:x this) xinc)
-                      (+ (:y this) yinc)))
+             (make Point (+ (:x this) xinc)
+                         (+ (:y this) yinc)))
     :add (fn [this other]
            (send-to this :shift (:x other)
                                 (:y other)))
    }
  })
 
-(prn (send-to my-point :origin))
+(send-to my-point :origin)
 
 ;; Redefining a class changes the behavior of existing instances
 ;; because having an instance's :__class_symbol__ be a symbol that's
@@ -111,4 +111,4 @@
                         message)]
        (apply method instance args))))
 
-(prn (send-to (a Holder "stuff") :held))
+(prn (send-to (make Holder "stuff") :held))

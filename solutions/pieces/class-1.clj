@@ -13,7 +13,7 @@
        (apply (method-from-message message class)
               instance args)))
 
-(def a
+(def make
      (fn [class & args]
        (let [seeded {:__class_symbol__ (:__own_symbol__ class)}]
          (apply-message-to class seeded :add-instance-values args))))
@@ -24,6 +24,6 @@
                          instance message args)))
 
 ;; For example:
-(prn (send-to (a Point 1 2) :class))
-(prn (send-to (a Point 1 2) :shift -1 -2))
+(prn (send-to (make Point 1 2) :class))
+(prn (send-to (make Point 1 2) :shift -1 -2))
 

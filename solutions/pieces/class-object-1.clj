@@ -1,3 +1,5 @@
+(load-file "sources/class-object.clj")
+
 ;;; Exercise 1
 
 ;; Here is the original:
@@ -52,7 +54,7 @@
 
 
 ;; Does a method-missing override work?
-; (send-to (a MissingOverrider) :queen-bee "Dawn")
+(send-to (send-to MissingOverrider :new) :queen-bee "Dawn")
 
 
 ;;; Exercise 2

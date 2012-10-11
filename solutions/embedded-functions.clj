@@ -1,4 +1,4 @@
-(def a
+(def make
      (fn [type & args]
        (apply type args)))
 
@@ -16,15 +16,15 @@
            :y :y
            :class :__class_symbol__
            :shift (fn [this xinc yinc]
-                    (a Point (+ (send-to this :x) xinc)
-                             (+ (send-to this :y) yinc)))
+                    (make Point (+ (send-to this :x) xinc)
+                                (+ (send-to this :y) yinc)))
            :add (fn [this other]
                   (send-to this :shift (send-to other :x)
                                        (send-to other :y)))}}))
                       
 
-(def my-point (a Point 1 2))
+(def my-point (make Point 1 2))
 (prn (send-to my-point :x))
 (prn (send-to my-point :y))
 (prn (send-to my-point :shift -1 -100))
-(prn (send-to my-point :add (a Point -1 -100)))
+(prn (send-to my-point :add (make Point -1 -100)))

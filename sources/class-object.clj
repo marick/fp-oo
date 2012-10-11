@@ -2,6 +2,27 @@
 ;; This imports a function from another namespace. (Think package or module.)
 (use '[clojure.pprint :only [cl-format]])
 
+;;                                              Anything
+(def Anything
+{
+  :__own_symbol__ 'Anything
+  :__class_symbol__ 'MetaAnything
+  :__instance_methods__
+  {
+   :add-instance-values identity
+   
+   :method-missing                        ;;<<== NEW
+   (fn [this message args]
+     (throw (Error. (cl-format nil "A ~A does not accept the message ~A."
+                               (send-to this :class-name)
+                               message))))
+   
+   :to-string (fn [this] (str this))
+   :class-name :__class_symbol__    
+   :class (fn [this] (class-from-instance this))
+  }
+})
+
 
 (def MetaAnything
 {
@@ -15,35 +36,8 @@
    }
  })
 
-(def Anything
-{
-  :__own_symbol__ 'Anything
-  :__class_symbol__ 'MetaAnything
-  :__instance_methods__
-  {
-    :add-instance-values identity
-    :method-missing
-    (fn [this message args]
-      (throw (Error. (cl-format nil "A ~A does not accept the message ~A."
-                                (send-to this :class-name)
-                                message))))
-    :to-string (fn [this] (str this))
-    :class-name :__class_symbol__    
-    :class (fn [this] (class-from-instance this))
-   }
- })
 
-(def MetaPoint
-{
-  :__own_symbol__ 'MetaPoint
-  :__superclass_symbol__ 'MetaAnything
-  :__instance_methods__
-  {
-   :origin (fn [class] (send-to class :new 0 0))
-   }
- })
-
-
+;;                                              Point
 (def Point
 {
   :__own_symbol__ 'Point
@@ -69,6 +63,17 @@
                        (send-to this :y)))
    }
  })
+
+(def MetaPoint
+{
+  :__own_symbol__ 'MetaPoint
+  :__superclass_symbol__ 'MetaAnything
+  :__instance_methods__
+  {
+   :origin (fn [class] (send-to class :new 0 0))
+   }
+ })
+
 
 
 
@@ -131,15 +136,6 @@
 ;; This imports a function from another namespace. (Think package or module.)
 (use '[clojure.pprint :only [cl-format]])
 
-(def MetaMissingOverrider
-{
-  :__own_symbol__ 'MetaMissingOverrider
-  :__superclass_symbol__ 'MetaAnything
-  :__instance_methods__
-  {
-  }
- })
-
  (def MissingOverrider
 {
   :__own_symbol__ 'MissingOverrider
@@ -153,3 +149,13 @@
      (println (cl-format nil "The arguments were ~A." args)))
   }
  })
+
+(def MetaMissingOverrider
+{
+  :__own_symbol__ 'MetaMissingOverrider
+  :__superclass_symbol__ 'MetaAnything
+  :__instance_methods__
+  {
+  }
+ })
+

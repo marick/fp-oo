@@ -1,4 +1,4 @@
-(def a
+(def make
      (fn [type & args]
        (apply type args)))
 
@@ -14,6 +14,6 @@
         :__methods__ {
            :class :__class_symbol__
            :shift (fn [this xinc yinc]
-                    (a Point (+ (:x this) xinc)
-                             (+ (:y this) yinc)))}}))
+                    (make Point (+ (:x this) xinc)
+                                (+ (:y this) yinc)))}}))
 

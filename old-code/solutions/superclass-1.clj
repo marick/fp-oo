@@ -11,6 +11,7 @@
      (fn [instance message & args]
        (apply-message-to (superclass-from-instance instance)
                          instance message args)))
-(prn (send-to (a Point 1 2) :to-string))
+
+(send-to (make Point 1 2) :to-string)
 
 

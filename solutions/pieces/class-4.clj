@@ -7,4 +7,4 @@
                         message)]
        (apply method instance args))))
 
-(prn (send-to (a Holder "stuff") :held))
+(prn (send-to (make Holder "stuff") :held))
