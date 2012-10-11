@@ -1,5 +1,5 @@
 
-;;; 10
+;;; 9
 
 (def check-sum
      (fn [sequence]

@@ -27,21 +27,10 @@
 
 ;;; 5
 
-(def make-sender
-     (fn [target-finder]
-       (fn [instance message & args]
-       (apply-message-to (target-finder instance)
-                         instance message args))))
-
-(def send-to (make-sender class-from-instance))
-(def send-super (make-sender superclass-from-instance))
-
-;;; 6
-
 (def my-atom (atom 0))
 (swap! my-atom (fn [anything] 33))
 
-;;; 7
+;;; 6
 
 (def always
      (fn [value]
@@ -54,7 +43,7 @@
 (swap! my-atom (constantly 8))
 
 
-;;; 8
+;;; 7
 
 (def check-sum
      (fn [sequence]
@@ -62,14 +51,14 @@
                      (range 1 (inc (count sequence)))
                      sequence))))
 
-;;; 9
+;;; 8
 
 (def isbn?
      (fn [candidate]
        (zero? (rem (check-sum (reversed-digits candidate)) 11))))
 
 
-;;; 10
+;;; 9
 
 (def check-sum
      (fn [sequence]
@@ -84,7 +73,7 @@
        (zero? (rem (check-sum (reversed-digits candidate)) 10))))
 
 
-;;; 11
+;;; 10
 
 (def number-checker
      (fn [digit-function divisor]

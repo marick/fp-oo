@@ -1,5 +1,5 @@
 
-;;; 8
+;;; 7
 
 (def check-sum
      (fn [sequence]
@@ -7,7 +7,7 @@
                      (range 1 (inc (count sequence)))
                      sequence))))
 
-;;; 9
+;;; 8
 
 (def isbn?
      (fn [candidate]

@@ -1,5 +1,5 @@
 
-;;; 11
+;;; 10
 
 (def number-checker
      (fn [digit-function divisor]

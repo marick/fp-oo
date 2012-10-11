@@ -14,14 +14,14 @@
                  {:charge (inc charge), :result result}))       ;; <<== change
 
              m-bind
-             (fn [monadic-value monadic-continuation]
+             (fn [monadic-value continuation]
                (cl-format true "Making a decision.~%")
                (fn [charge]
                  (let [enclosed-map (monadic-value charge)
                        binding-value (:result enclosed-map)]
                    (cl-format true "Calling continuation with ~A~%" binding-value)
                    (cl-format true "... The charge to increment is ~A~%", charge)
-                   ( (monadic-continuation binding-value) charge))))]))                        ;; <<== change
+                   ( (continuation binding-value) charge))))]))                        ;; <<== change
 
 (println "==========")
 (println "Defining run-and-charge.")

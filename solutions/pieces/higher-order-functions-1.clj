@@ -27,21 +27,10 @@
 
 ;;; 5
 
-(def make-sender
-     (fn [target-finder]
-       (fn [instance message & args]
-       (apply-message-to (target-finder instance)
-                         instance message args))))
-
-(def send-to (make-sender class-from-instance))
-(def send-super (make-sender superclass-from-instance))
-
-;;; 6
-
 (def my-atom (atom 0))
 (swap! my-atom (fn [anything] 33))
 
-;;; 7
+;;; 6
 
 (def always
      (fn [value]

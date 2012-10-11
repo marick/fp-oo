@@ -1,7 +1,7 @@
-(ns sources.t-add-and-a
+(ns sources.t-add-and-make
   (:use midje.sweet))
 
-(load-file "sources/add-and-a.clj")
+(load-file "sources/add-and-make.clj")
 
 (fact
   (Point 1 2) => {:x 1 :y 2 :__class_symbol__ 'Point}

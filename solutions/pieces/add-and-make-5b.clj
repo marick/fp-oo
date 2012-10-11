@@ -5,7 +5,8 @@
      (fn [& points]
        (and (= 3 (count points))
             (= (distinct points) points))))
-(prn (valid-triangle? (a Point 0 0) (a Point 0 1)))
-(prn (valid-triangle? (a Point 0 0) (a Point 0 0) (a Point 3 4)))
-(prn (valid-triangle? (a Point 0 0) (a Point 0 3) (a Point 3 0)))
+
+(prn (valid-triangle? (make Point 0 0) (make Point 0 1)))
+(prn (valid-triangle? (make Point 0 0) (make Point 0 0) (make Point 3 4)))
+(prn (valid-triangle? (make Point 0 0) (make Point 0 3) (make Point 3 0)))
 
