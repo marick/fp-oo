@@ -57,8 +57,26 @@
 
 ;;; Exercise 2
 
+;; Before:
+;; (send-to Point :to-string)    ; Stack overflow error, sometimes repl crash
+;; (send-to Anything :unknown)   ; Stack overflow error, sometimes repl crash
+
+;; Reasoning:
+;; * Any object must be a subclass of Anything (either direct or indirect).
+;; 
+;; * MetaAnything is an object
+;; 
+;; * Therefore: it must be a subclass of Anything.
+;; 
+;; * It's a direct subclass because there's nothing to put between it and Anything.
+
 (def MetaAnything
      (assoc MetaAnything :__superclass_symbol__ 'Anything))
 
+;; After
+(send-to Point :to-string)    ; a string
+
+(try (send-to Anything :unknown)
+(catch Error e))              ; a method-missing error
 
 
