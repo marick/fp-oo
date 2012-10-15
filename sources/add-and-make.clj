@@ -6,10 +6,14 @@
         :y y
         :__class_symbol__ 'Point}))
 
+(def x :x)
+(def y :y)
+(def class-of :__class_symbol__)
+
 (def shift
      (fn [this xinc yinc]
-       (Point (+ (:x this) xinc)
-              (+ (:y this) yinc))))
+       (Point (+ (x this) xinc)
+              (+ (y this) yinc))))
 
 (def Triangle
      (fn [point1 point2 point3]
