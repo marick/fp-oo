@@ -4,16 +4,9 @@
 ;;; (roughly) match the order of the book.
 (declare class-from-instance send-to make)
 
-(def Anything
-{
-  :__own_symbol__ 'Anything
-  :__instance_methods__
-  {
-    :add-instance-values identity
-    :class-name :__class_symbol__    
-    :class (fn [this] (class-from-instance this))
-   }
- })
+;; Note: because Point refers to the quoted symbol Anything (not its value),
+;; it can be defined before Anything is. I'll define Anything second to match
+;; the order used in chapter 6.
 
 (def Point
 {
@@ -31,6 +24,20 @@
                                 (:y other)))
    }
  })
+
+
+
+(def Anything
+{
+  :__own_symbol__ 'Anything
+  :__instance_methods__
+  {
+    :add-instance-values identity
+    :class-name :__class_symbol__    
+    :class (fn [this] (class-from-instance this))
+   }
+ })
+
 
 
 ;;; Here are methods that take a class-symbol or instance containing one and follow it somewhere. 
