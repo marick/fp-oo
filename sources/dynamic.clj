@@ -314,12 +314,12 @@
           (fn [xinc yinc]
             (let [my-class (send-to this :class)]
               (send-to my-class :new
-                                (+ (:x this) xinc)
-                                (+ (:y this) yinc))))
+                                (+ (send-to this :x) xinc)
+                                (+ (send-to this :y) yinc))))
           :add
           (fn [other]
-            (send-to this :shift (:x other)
-                                 (:y other)))
+            (send-to this :shift (send-to other :x)
+                                 (send-to other :y)))
          } 
          
          {

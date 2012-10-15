@@ -35,7 +35,7 @@
 ;;; Exercise 3
 
 
-(def ^:dynamic current-message)
+(def ^:dynamic current-message nil)
 
 (def apply-message-to
      (fn [method-holder instance message args]
