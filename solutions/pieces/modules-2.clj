@@ -14,13 +14,12 @@
                                   ;; That means the class `Module` must be in
                                   ;; the "up" chain of the leftward object.
                                   ;; Since we don't have a need for a Meta
-                                  ;; version of this new module, we can point
-                                  ;; directly to it. Otherwise, we'd have the
-                                  ;; left object point up to `Module`.
+                                  ;; version of this new module, "left" can
+                                  ;; point directly at `Module`. 
                                   :left 'Module
 
                                   ;; If `:up` pointed to, say, `Anything`, then
-                                  ;; the methods from that method holder would get
+                                  ;; the methods from `Anything` would get
                                   ;; inserted into the inheritance chain earlier than
                                   ;; they would otherwise be, preventing other classes
                                   ;; from overriding them.

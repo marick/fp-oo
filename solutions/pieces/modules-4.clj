@@ -14,10 +14,8 @@
                          stub {:__own_symbol__ stub-name
                                :__up_symbol__ (:__up_symbol__ this)
                                :__left_symbol__ module-name
-                               :__module_stub?__ true}]
-                     ;; This now points up to the included stub.
+                               :__module_stub?__ true}]              ;;<<== New
                      (install (assoc this :__up_symbol__ stub-name))
-                     ;; And the included stub points to the real module.
                      (install stub)))
                }))
 

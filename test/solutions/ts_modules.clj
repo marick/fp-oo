@@ -14,9 +14,9 @@
   (send-to Klass :to-string) => "class Klass"
   (send-to Module :to-string) => "class Module"
 
-  (send-to Module :new 'Cuddlesome) => "new module Cuddlesome"
-  (def Cuddlesome {:__own_symbol__ 'Cuddlesome})
-  (send-to Trilobite :include Cuddlesome) => "include module Cuddlesome")
+  (let [Kuddlesome (send-to Module :new 'Kuddlesome)]
+    Kuddlesome => {:__own_symbol__ 'Kuddlesome}
+    (send-to Trilobite :include Kuddlesome) => "Module Kuddlesome will someday be included into Trilobite"))
 
 (def Trilobite nil)
 
@@ -206,16 +206,3 @@
   (send-to cyclops :between? panopty cyclops) => falsey
   (send-to cyclops :between? panopty panopty) => falsey)
 
-;;; How about send-super?
-
-;; (send-to Module :new 'T1
-;;          {:sup (fn [this] ["T1" (send-super this :sup)])})
-
-;; (send-to Module :new 'T2
-;;          {:sup (fn [this] ["T2" (send-super this :sup)])})
-
-;; (send-to Module :new 'T1-1
-;;          {:sup (fn [this] ["T1-1"])})
-
-(future-fact "send-super works with modules"
-  (send-to cyclops :sup) => ["T2" ["T1" ["T1-1"]]])

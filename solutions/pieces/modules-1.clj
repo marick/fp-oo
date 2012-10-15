@@ -8,7 +8,8 @@
                         {
                          :include
                          (fn [this module]
-                           (str "include module " (:__own_symbol__ module)))
+                           (str "Module " (:__own_symbol__ module)
+                                " will someday be included into " (:__own_symbol__ this)))
                          }))
 
 (install
@@ -19,14 +20,14 @@
                  {
                   :new
                   (fn [this module-symbol]
-                    (str "new module " module-symbol))
+                    {:__own_symbol__ module-symbol})
                   })))
 
 
 ;; Klass
 (install (method-holder 'Klass,
                         :left 'MetaKlass,
-                        :up 'Module,
+                        :up 'Module,             ;; <<== new
                         {
                          :new
                          (fn [class & args]
@@ -47,7 +48,7 @@
  (invisible
   (method-holder 'MetaKlass,
                  :left 'Klass,
-                 :up 'MetaModule,
+                 :up 'MetaModule,              ;; <<== new
                  {
                   :new
                   (fn [this

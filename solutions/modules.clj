@@ -8,7 +8,8 @@
                         {
                          :include
                          (fn [this module]
-                           (str "include module " (:__own_symbol__ module)))
+                           (str "Module " (:__own_symbol__ module)
+                                " will someday be included into " (:__own_symbol__ this)))
                          }))
 
 (install
@@ -19,14 +20,14 @@
                  {
                   :new
                   (fn [this module-symbol]
-                    (str "new module " module-symbol))
+                    {:__own_symbol__ module-symbol})
                   })))
 
 
 ;; Klass
 (install (method-holder 'Klass,
                         :left 'MetaKlass,
-                        :up 'Module,
+                        :up 'Module,             ;; <<== new
                         {
                          :new
                          (fn [class & args]
@@ -47,7 +48,7 @@
  (invisible
   (method-holder 'MetaKlass,
                  :left 'Klass,
-                 :up 'MetaModule,
+                 :up 'MetaModule,              ;; <<== new
                  {
                   :new
                   (fn [this
@@ -84,13 +85,12 @@
                                   ;; That means the class `Module` must be in
                                   ;; the "up" chain of the leftward object.
                                   ;; Since we don't have a need for a Meta
-                                  ;; version of this new module, we can point
-                                  ;; directly to it. Otherwise, we'd have the
-                                  ;; left object point up to `Module`.
+                                  ;; version of this new module, "left" can
+                                  ;; point directly at `Module`. 
                                   :left 'Module
 
                                   ;; If `:up` pointed to, say, `Anything`, then
-                                  ;; the methods from that method holder would get
+                                  ;; the methods from `Anything` would get
                                   ;; inserted into the inheritance chain earlier than
                                   ;; they would otherwise be, preventing other classes
                                   ;; from overriding them.
@@ -113,9 +113,9 @@
                          stub {:__own_symbol__ stub-name
                                :__up_symbol__ (:__up_symbol__ this)
                                :__left_symbol__ module-name}]
-                     ;; This now points up to the included stub.
+                     ;; This now points up to the included stub:
                      (install (assoc this :__up_symbol__ stub-name))
-                     ;; And the included stub points to the real module.
+                     ;; And the included stub points to the real module:
                      (install stub)))
                }))
 
@@ -135,10 +135,8 @@
                          stub {:__own_symbol__ stub-name
                                :__up_symbol__ (:__up_symbol__ this)
                                :__left_symbol__ module-name
-                               :__module_stub?__ true}]
-                     ;; This now points up to the included stub.
+                               :__module_stub?__ true}]              ;;<<== New
                      (install (assoc this :__up_symbol__ stub-name))
-                     ;; And the included stub points to the real module.
                      (install stub)))
                }))
 

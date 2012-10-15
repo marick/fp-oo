@@ -176,7 +176,7 @@
 
 ;; An example class:
 
-(def <=>
+(def <=>  ;; Spaceship operator for numbers.
      (fn [a-number another-number]
        (max -1 (min 1 (compare a-number another-number)))))
 
@@ -189,7 +189,7 @@
 
           :facets :facets
 
-          :<=>
+          :<=>  ;; Spaceship operator for trilobites
           (fn [this that]
             (<=> (send-to this :facets)
                  (send-to that :facets)))
