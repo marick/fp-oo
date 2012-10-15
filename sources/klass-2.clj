@@ -1,3 +1,5 @@
+(load-file "sources/klass-1.clj")
+
 ;; This imports a function from another namespace. (Think package or module.)
 (use '[clojure.pprint :only [cl-format]])
 ;;; The two class/pairs from which everything else can be built
