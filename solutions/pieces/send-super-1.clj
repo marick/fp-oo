@@ -18,17 +18,16 @@
                         (message (held-methods holder-symbol)))
                       (reverse (lineage first-candidate))))))
 
-;;; Exercise 2 
-
-(def ^:dynamic holder-of-current-method nil)
-
 (def apply-message-to
      (fn [method-holder instance message args]
-       (let [holder (find-containing-holder-symbol (:__own_symbol__ method-holder) message)]
-         (if holder
-           (binding [this instance
-                     holder-of-current-method holder]
-             (apply (message (held-methods holder)) args))
+       (let [target-holder (find-containing-holder-symbol (:__own_symbol__ method-holder)
+                                                          message)]
+         (if target-holder
+           (binding [this instance]
+             (apply (message (held-methods target-holder)) args))
            (send-to instance :method-missing message args)))))
 
-
+(def point (send-to Point :new 1 2))
+(prn (send-to point :class-name))
+(prn (send-to point :x))
+(prn (send-to point :shift 100 200))

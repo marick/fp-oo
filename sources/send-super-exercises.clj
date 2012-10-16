@@ -1,20 +1,31 @@
-;; Exercise 2 and 3
+;;; For Exercise 2
 
 (send-to Klass :new
          'DynamicPoint 'Point
          {
           :shift
           (fn [xinc yinc]
-            (str "Method found in " holder-of-current-method))
+            (println "Method" current-message "found in" holder-of-current-method)
+            (println "It has these arguments:" current-arguments))
          }
          {})
 
 (def point (send-to DynamicPoint :new 1 2))
-(println (send-to point :shift 100 200))
+(send-to point :shift 100 200)
 
-;; Exercise 4
 
-(declare send-super) ;; This is just here for my automated tests.
+;;; For exercise 3
+
+
+(def throw-no-superclass-method-error
+     (fn []
+       (throw (Error. (str "No superclass method `" current-message
+                           "` above `" holder-of-current-method
+                           "`.")))))
+
+
+
+;;; For Exercise 4
 
 (send-to Klass :new
          'ExaggeratingPoint 'Point
@@ -25,8 +36,8 @@
          }
          {})
           
-;; (def braggart (send-to ExaggeratingPoint :new 1 2))
-;; (send-to braggart :shift 1 2)
+(def braggart (send-to ExaggeratingPoint :new 1 2))
+(prn (send-to braggart :shift 1 2))  ;; A point at 101, 202
 
 
 
@@ -39,86 +50,39 @@
                  }
                 {})
 
-;; (def super-braggart (send-to SuperDuperExaggeratingPoint :new 1 2))
-;; (send-to super-braggart :shift 1 2)
+(def super-braggart (send-to SuperDuperExaggeratingPoint :new 1 2))
+(send-to super-braggart :shift 1 2)  ; a point at 123401, 246802
 
 
+;;; For exercise 5
 
-;; Exercise 5
-
-;;; This first set of classes checks that `repeat-to-super` both
-;;; works after a normal method call and after a previous
-;;; `repeat-to-super`.
-
-(declare repeat-to-super) ;; This is just here for my automated tests.
+(send-to Klass :new
+         'Upper 'Anything
+         {
+          :super-exists
+          (fn [& args]
+            (str "Got these args: " args))
+          }
+         {})
 
 
 (send-to Klass :new
-                'One 'Anything
-                {
-                 :add-instance-values
-                 (fn [value] (assoc this :one value))
-                }
-                {})
+         'Lower 'Upper
+         {
+          :super-exists (fn [& args] (repeat-to-super))
+          ;; If you like, you can use this to check whether
+          ;; an attempt to repeat to a nonexistent super-method
+          ;; correctly errors out.
+          :super-missing (fn [& args] (repeat-to-super))
+         }
+         {})
 
 (send-to Klass :new
-                'Two 'One
-                {
-                 :add-instance-values
-                 (fn [value]
-                   (assoc (repeat-to-super) :two value))
-                }
-                {})
-
-(send-to Klass :new
-                'Three 'Two
-                {
-                 :add-instance-values
-                 (fn [value]
-                   (assoc (repeat-to-super) :three value))
-
-                 :reveal
-                 (fn []
-                   [(:one this) (:two this) (:three this)])
-                }
-                {})
-
-;; (def object (send-to Three :new 1))
-;; (send-to object :reveal) ;; [1 1 1]
+         'Lowest 'Upper
+         {}
+         {})
 
 
-;;; This set of classes checks that `repeat-to-super` works
-;;; after a `send-super`.
+(def object (send-to Lowest :new))
+(println (send-to object :super-exists 1 2 3))
 
-(send-to Klass :new
-                'A 'Anything
-                {
-                 :add-instance-values
-                 (fn [value] (assoc this :a value))
-                }
-                {})
-
-(send-to Klass :new
-                'B 'A
-                {
-                 :add-instance-values
-                 (fn [value]
-                   (assoc (repeat-to-super) :b value))
-                }
-                {})
-
-(send-to Klass :new
-                'C 'B
-                {
-                 :add-instance-values
-                 (fn [value]
-                   (assoc (send-super (* 2 value)) :c value))
-
-                 :reveal
-                 (fn []
-                   [(:a this) (:b this) (:c this)])
-                }
-                {})
-
-;; (def object (send-to C :new 1))
-;; (send-to object :reveal) ;; (2 2 1)

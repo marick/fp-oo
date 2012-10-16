@@ -18,87 +18,67 @@
                         (message (held-methods holder-symbol)))
                       (reverse (lineage first-candidate))))))
 
-;;; Exercise 2 
+(def apply-message-to
+     (fn [method-holder instance message args]
+       (let [target-holder (find-containing-holder-symbol (:__own_symbol__ method-holder)
+                                                          message)]
+         (if target-holder
+           (binding [this instance]
+             (apply (message (held-methods target-holder)) args))
+           (send-to instance :method-missing message args)))))
 
-(def ^:dynamic holder-of-current-method nil)
+(def point (send-to Point :new 1 2))
+(prn (send-to point :class-name))
+(prn (send-to point :x))
+(prn (send-to point :shift 100 200))
+;;; Exercise 2
+
+
+(def ^:dynamic current-message)
+(def ^:dynamic current-arguments)
+(def ^:dynamic holder-of-current-method)
 
 (def apply-message-to
      (fn [method-holder instance message args]
-       (let [holder (find-containing-holder-symbol (:__own_symbol__ method-holder) message)]
-         (if holder
+       (let [target-holder (find-containing-holder-symbol (:__own_symbol__ method-holder)
+                                                          message)]
+         (if target-holder
            (binding [this instance
-                     holder-of-current-method holder]
-             (apply (message (held-methods holder)) args))
+                     current-message message
+                     current-arguments args
+                     holder-of-current-method target-holder]
+             (apply (message (held-methods target-holder)) args))
            (send-to instance :method-missing message args)))))
 
 
 ;;; Exercise 3
 
 
-(def ^:dynamic current-message nil)
-
-(def apply-message-to
-     (fn [method-holder instance message args]
-       (let [holder-symbol (find-containing-holder-symbol (:__own_symbol__ method-holder) message)]
-         (if holder-symbol
-           (binding [holder-of-current-method holder-symbol
-                     this instance
-                     current-message message]
-             (apply (message (held-methods holder-symbol)) args))
-           (send-to instance :method-missing message args)))))
-
-
-;;; Exercise 4
-
+(def throw-no-superclass-method-error
+     (fn []
+       (throw (Error. (str "No superclass method `" current-message
+                           "` above `" holder-of-current-method
+                           "`.")))))
 
 (def next-higher-holder-or-die
      (fn []
        (let [first-candidate (method-holder-symbol-above holder-of-current-method)]
          (or (find-containing-holder-symbol first-candidate current-message)
-             (throw (Error. (str "No superclass method `" current-message
-                                 "` above `" holder-of-current-method
-                                 "`.")))))))
-
-(def send-super
-     (fn [& args]
-       (binding [holder-of-current-method (next-higher-holder-or-die)]
-         (apply (current-message (held-methods holder-of-current-method)) args))))
-       
+             (throw-no-superclass-method-error)))))
 
 
-;; Exercise 5
-
-;; Since `repeat-to-super` doesn't explicitly take the arguments, they have
-;; to be made available dynamically.
-(def ^:dynamic current-arguments)
-
-;; `current-arguments` needs to be bound in both `apply-message-to`
-;; and `send-super`.  I don't like the duplication, nor that the
-;; binding needed for `send-super` is done in `send-super`, but the
-;; binding needed for `send-to` is done in the helper function
-;; `apply-message-to`. Later exercises will deal with this problem.
-
-(def apply-message-to
-     (fn [method-holder instance message args]
-       (let [holder-symbol (find-containing-holder-symbol (:__own_symbol__ method-holder) message)]
-         (if holder-symbol
-           (binding [holder-of-current-method holder-symbol
-                     this instance
-                     current-message message
-                     current-arguments args]                      ;; <<== change
-             (apply (message (held-methods holder-symbol)) args))
-           (send-to instance :method-missing message args)))))
+;;; Exercise 4
 
 (def send-super
      (fn [& args]
        (binding [holder-of-current-method (next-higher-holder-or-die)
-                 current-arguments args]                         ;; <<== change
+                 current-arguments args]
          (apply (current-message (held-methods holder-of-current-method)) args))))
 
-;;; Then repeat-to-super is straightforward:
+
+;;; Exercise 5
 
 (def repeat-to-super
      (fn []
        (apply send-super current-arguments)))
-
 
