@@ -4,7 +4,7 @@
 
 
 (send-to Klass :new
-         'Message 'Anything
+         'ActiveMessage 'Anything
          {
           :add-instance-values
           (fn [& key-value-pairs]
@@ -15,14 +15,14 @@
           :args        (fn [] (:args this))
           :target      (fn [] (:target this))
           :sender      (fn [] (:sender this))
-          :previous    (fn [] (:previous this))    ;; <<==
-          :super-count (fn [] (:super-count this)) ;; <<==
-
-          :trace                                   ;; <<==
+          :previous    (fn [] (:previous this))                  ;; <<==
+          :super-count (fn [] (:super-count this))               ;; <<==
+          
+          :trace                                                 ;; <<==
           (fn []
             ;; Note that I decided, just to make things more varied, that
             ;; the work of turning a linked list of message lists into a
-            ;; sequence should be a class method of `Message`.
+            ;; sequence should be a class method of `ActiveMessage`.
             (let [raw-results (send-to (send-to this :class) :message-trace-to-sequence this)
                   formatted-results (map (fn [result]
                                            (select-keys result
@@ -32,29 +32,28 @@
 
           :move-up 
           (fn []
-            (let [holder-name (send-to this :find-containing-holder-symbol)]
-              (if holder-name 
+            (let [holder-name (send-to this :holder-name-above)]
+              (if holder-name
                 (assoc this
                        :holder-name holder-name
-                       :previous this
+                       :previous    this
                        :super-count (inc (send-to this :super-count)))  ;; <<==
-                (send-to this :no-message-to-move-up-to))))
-          
-          :find-containing-holder-symbol
-          (fn []
-            (find-containing-holder-symbol (send-to this :next-holder-up)
-                                           (send-to this :name)))
-          
-          :next-holder-up
-          (fn []
-            (method-holder-symbol-above (send-to this :holder-name)))
-          
-          :no-message-to-move-up-to
-          (fn []
-            (throw (Error. (str "No superclass method `" (send-to this :name)
-                                "` above `" (send-to this :holder-name)
-                                "`."))))
+                (send-to this :spew-fail-to-move-up-error))))
+
+         ;; Private
+         :holder-name-above
+         (fn [] 
+           (let [symbol-above (method-holder-symbol-above (send-to this :holder-name))]
+             (find-containing-holder-symbol symbol-above (send-to this :name))))
+
+         :spew-fail-to-move-up-error
+         (fn []
+           (throw (Error. (str "No superclass method `" (send-to this :name)
+                               "` above `" (send-to this :holder-name)
+                               "`."))))
          }
+
+         ;; Class methods
          {
           :message-trace-to-sequence                                   ;; <<==
           (fn [final-message]
@@ -66,20 +65,17 @@
           })
 
 
-(def tentative-message
-     (fn [target name args]
-       (let [initialize (get (held-methods 'Message) :add-instance-values)
-             previous message                                                 ;; <<==
-             sender this]
-         (binding [this (basic-object 'Message)]
-           (initialize :name name
-                       :holder-name (find-containing-holder-symbol
-                                      (:__left_symbol__ target)
-                                      name)
-                       :args args
-                       :target target
-                       :sender sender
-                       :previous previous                                     ;; <<==
-                       :super-count 0)))))                                    ;; <<==
-
+(def send-to-Message-new  ;; Supposed to remind you of (send-to Message :new ...)
+     (fn [target name args holder-name]
+       (let [initializer (get (held-methods 'ActiveMessage) :add-instance-values)
+             previous *active-message*                                 ;; <<==
+             sender this]                                                 
+         (binding [this (basic-object 'ActiveMessage)]
+           (initializer :name name
+                        :holder-name holder-name
+                        :args args
+                        :target target
+                        :sender sender
+                        :previous previous                             ;; <<==
+                        :super-count 0)))))                            ;; <<==
 

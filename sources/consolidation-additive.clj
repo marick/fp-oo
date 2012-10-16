@@ -1,9 +1,6 @@
 (load-file "sources/dynamic.clj")
 
-(def ^:dynamic message {:name :undefined,
-                        :holder-name :undefined,
-                        :args :undefined,
-                        :target :undefined})
+(def ^:dynamic *active-message* nil)
 
 ;;; Constructing messages
 
@@ -13,57 +10,57 @@
                         (message-name (held-methods holder-symbol)))
                       (reverse (lineage first-candidate))))))
 
-(def fresh-message
+(def fresh-active-message
      (fn [target name args]
-       (let [tentative (assoc message
-                             :name name 
-                             :holder-name (find-containing-holder-symbol (:__left_symbol__ target) name)
-                             :args args
-                             :target target)]
-         (if (:holder-name tentative)
-           tentative
-           (fresh-message target
-                          :method-missing
-                          (vector name args))))))
-       
-(def message-above
-     (fn [message]
-       (let [holder-name (find-containing-holder-symbol
-                          (method-holder-symbol-above (:holder-name message))
-                          (:name message))]
+       (let [holder-name (find-containing-holder-symbol (:__left_symbol__ target)
+                                                        name)]
+             (if holder-name
+               {:name name, :holder-name holder-name, :args args, :target target}
+               (fresh-active-message target
+                                     :method-missing
+                                     (vector name args))))))
+
+
+(def using-method-above
+     (fn [active-message]
+       (let [symbol-above (method-holder-symbol-above (:holder-name active-message))
+             holder-name (find-containing-holder-symbol symbol-above
+                                                        (:name active-message))]
          (if holder-name
-           (assoc message :holder-name holder-name)
-           (throw (Error. (str "No superclass method `" (:name message)
-                           "` above `" (:holder-name message)
+           (assoc active-message :holder-name holder-name)
+           (throw (Error. (str "No superclass method `" (:name active-message)
+                           "` above `" (:holder-name active-message)
                            "`.")))))))
 
-;; Activating messages
+;; Activating methods
 
 (def method-to-run
-     (fn [message]
-       (get (held-methods (:holder-name message)) (:name message))))
+     (fn [active-message]
+       (get (held-methods (:holder-name active-message))
+            (:name active-message))))
 
-(def activate
-     (fn [message]
-       (binding [message message
-                 this (:target message)]
-         (apply (method-to-run message) (:args message)))))
+(def activate-method
+     (fn [active-message]
+       (binding [*active-message* active-message
+                 this (:target active-message)]
+         (apply (method-to-run active-message)
+                (:args active-message)))))
 
 ;;; Public interface
 
 
 (def send-to
      (fn [instance message-name & args]
-       (activate (fresh-message instance message-name args))))
+       (activate-method (fresh-active-message instance message-name args))))
 
 (def repeat-to-super
      (fn []
-       (activate (message-above message))))
+       (activate-method (using-method-above *active-message*))))
        
 (def send-super
      (fn [& args]
-       (def mss message)
-       (activate (message-above (assoc message :args args)))))
+       (let [with-replaced-args (assoc *active-message* :args args)]
+         (activate-method (using-method-above with-replaced-args)))))
 
 ;; Klass
 (install (method-holder 'Klass,
@@ -73,7 +70,7 @@
                          :new
                          (fn [& args]
                            (let [seeded {:__left_symbol__ (:__own_symbol__ this)}]
-                             (apply send-to seeded :add-instance-values args)))    ;; <<== change
+                             (apply send-to seeded :add-instance-values args)))
 
                          :to-string
                          (fn []

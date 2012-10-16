@@ -18,7 +18,7 @@
 
 (fact
   (let [snooper (send-to SubSnooper :new)]
-    (activate (send-to snooper :snoop "an arg"))
+    (activate-method (send-to snooper :snoop "an arg"))
     => [:snoop 'Snooper ["an arg"] snooper]
     (send-to snooper :fail-dramatically) => (throws Error)
     (send-to snooper :to-string) => "Look! {:__left_symbol__ SubSnooper}"))
@@ -36,7 +36,7 @@
 
 (fact
   (let [snooper (send-to SubSnooper :new)]
-    (activate (send-to snooper :snoop "an arg"))
+    (activate-method (send-to snooper :snoop "an arg"))
     => [:snoop 'Snooper ["an arg"] snooper]
     (send-to snooper :fail-dramatically) => (throws Error)
     (send-to snooper :to-string) => "Look! {:__left_symbol__ SubSnooper}"))

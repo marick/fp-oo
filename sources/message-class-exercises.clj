@@ -7,19 +7,41 @@
           :snoop
           (fn [& args]
             [
-             (send-to message :name)
-             (send-to message :holder-name)
-             (send-to message :args)
-             (send-to message :target)
+             (send-to *active-message* :name)
+             (send-to *active-message* :holder-name)
+             (send-to *active-message* :args)
+             (send-to *active-message* :target)
             ])
           }
          {})
 
-;; (def snooper (send-to Snooper :new))
-;; (send-to snooper :snoop "an arg") ;  => [:snoop 'Snooper ["an arg"] snooper])
+(def snooper (send-to Snooper :new))
+(prn (send-to snooper :snoop "an arg")) ;  => [:snoop 'Snooper ("an arg") snooper])
 
 
 ;; For exercise 3
+
+(comment
+  ;; Here are the two methods you are to make work.
+  ;; They're commented out so that they don't break my
+  ;; automated tests.
+(def repeat-to-super
+     (fn []
+       (activate-method (send-to *active-message* :move-up))))
+       
+(def send-super
+     (fn [& args]
+       (activate-method (assoc (send-to *active-message* :move-up)
+                          :args args))))
+
+  ;; Since you're replacing `using-method-above`, it's useful to
+  ;; define it to something that will blow up if there's still a
+  ;; stray call to it.
+
+(def using-message-above :ensure-that-the-function-can-no-longer-be-called)
+
+)
+
 
 (send-to Klass :new
          'SubSnooper 'Snooper
@@ -30,11 +52,11 @@
             ;; in the context of a method
             ;; that shadows a method in the
             ;; superclass.
-            (send-to message :move-up))
+            (send-to *active-message* :move-up))
 
           :fail-dramatically
           (fn []
-            (send-to message :move-up))
+            (send-to *active-message* :move-up))
 
           :to-string
           (fn []
@@ -43,21 +65,26 @@
 
          {})
 
-;; (def snooper (send-to SubSnooper :new))
-;; (send-to snooper :snoop "an arg")  ; => {:name :snoop,
-;;                                    ;     :holder-name Snooper,
-;;                                    ;     :args ("an arg"),
-;;                                    ;     :target {:__left_symbol__ SubSnooper},
-;;                                    ;     :__left_symbol__ Message}
+(comment
+  ;; The following is commented out because of the way my 
+  ;; automated tests work. It's in a block comment to make
+  ;; it easy for you to copy it into a REPL
 
-;; (activate (send-to snooper :snoop "an arg")) ; => [:snoop Snooper ("an arg")
-;;                                              ;     {:__left_symbol__ SubSnooper}]
-;; (send-to snooper :fail-dramatically)         ; throws Error
-;; (send-to snooper :to-string)                 ; =>  "Look! {:__left_symbol__ SubSnooper}"
+(def snooper (send-to SubSnooper :new))
+(prn (send-to snooper :snoop "an arg")) ; => {:name :snoop,
+                                        ;     :holder-name Snooper,
+                                        ;     :args ("an arg"),
+                                        ;     :target {:__left_symbol__ SubSnooper},
+                                        ;     :__left_symbol__ Message}
 
+(prn (activate-method (send-to snooper :snoop "an arg"))) ; => [:snoop Snooper ("an arg")
+                                                         ;     {:__left_symbol__ SubSnooper}]
+(send-to snooper :fail-dramatically)    ; throws Error
+(prn (send-to snooper :to-string))      ; =>  "Look! {:__left_symbol__ SubSnooper}"
 
+)
 
-;; For exercise 6
+;; ;; For exercise 6
 
 (send-to Klass :new
          'Criminal 'Anything
@@ -68,9 +95,10 @@
               (println "Criminal:" taunt)
               (send-to copper :be-taunted taunt)))
 
-          :be-arrested
+          :give-yourself-up
           (fn []
-            (println "Criminal: It's a fair cop, but society is to blame."))
+            (let [confession "It's a fair cop, but society is to blame."]
+              (println "Criminal:" confession)))
           }
          {})
 
@@ -85,19 +113,22 @@
           
           :be-taunted
           (fn [taunt]
-            (let [evildoer (send-to message :sender)]
-              (cl-format true "Detective ~A: Wot? Who?~%" (send-to this :name))
+            (let [evildoer (send-to *active-message* :sender)]
+              (cl-format true "Detective ~A: Wot? Who?~%"
+                              (send-to this :name))
               (println "<nab/>")
-              (send-to evildoer :be-arrested)))
+              (send-to evildoer :give-yourself-up)))
           }
          {})
 
-;; (def criminal (send-to Criminal :new))
-;; (def police (send-to Police :new "Biggles"))
-;; (send-to criminal :taunt police)
+(comment
 
+(def criminal (send-to Criminal :new))
+(def police (send-to Police :new "Biggles"))
+(send-to criminal :taunt police)
+)
 
-;; For Exercise 7
+;; ;; For Exercise 7
 
 (declare Bottom Middle Top)
 
@@ -113,8 +144,7 @@
                                      :secondary-message (* 10 n)))
           :secondary-message (fn [n] (repeat-to-super))
          }
-         {
-          })
+         {})
 
 (send-to Klass :new
          'Middle 'Top
@@ -129,20 +159,26 @@
          'Top 'Anything
          {
           :secondary-message (fn [n] (send-to this :tertiary-message (* 10 n)))
-          :tertiary-message (fn [n] message)
+          :tertiary-message (fn [n] *active-message*)
           }
          {})
 
+(comment
+
 ;; It might be helpful to start with simple cases and work up.
-;; (def traceful (send-to (send-to Top :new) :tertiary-message 1))
-;; (send-to traceful :trace)
+(def traceful (send-to (send-to Top :new) :tertiary-message 1))
+traceful  
+(send-to traceful :trace)
 
-;; (def traceful (send-to (send-to Middle :new) :tertiary-message 1))
-;; (pprint (send-to traceful :trace))
+(def traceful (send-to (send-to Middle :new) :tertiary-message 1))
+traceful  
+(pprint (send-to traceful :trace))
 
-;; (def traceful (send-to (send-to Bottom :new "one") :chained-message 1))
-;; (pprint (send-to traceful :trace))
+(def traceful (send-to (send-to Bottom :new "one") :chained-message 1))
+traceful  
+(pprint (send-to traceful :trace))
 
+)
 
 ;; `friendly-trace can take the output of one of the above lines and
 ;; print it in a more pleasing form. It shows a few new Clojure
@@ -241,6 +277,3 @@
          (dorun (map println (map format-one-element renamed-trace)))
          (println "-------------")
          (dorun (map println (table-of-contents namings))))))
-
-              
-            

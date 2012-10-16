@@ -3,26 +3,24 @@
 ;;; Context available to all messages
 
 (def ^:dynamic this nil)
-(def ^:dynamic message {:name :undefined,
-                        :holder-name :undefined,
-                        :args :undefined,
-                        :target :undefined})
+(def ^:dynamic *active-message* nil)
 
 ;;; Public interface
-(declare activate fresh-message message-above)
+(declare activate-method fresh-active-message using-method-above)
 
 (def send-to
      (fn [instance message-name & args]
-       (activate (fresh-message instance message-name args))))
+       (activate-method (fresh-active-message instance message-name args))))
 
 (def repeat-to-super
      (fn []
-       (activate (message-above message))))
+       (activate-method (using-method-above *active-message*))))
        
 (def send-super
      (fn [& args]
-       (def mss message)
-       (activate (message-above (assoc message :args args)))))
+       (activate-method (assoc (using-method-above *active-message*)
+                               :args args))))
+
 
 
 ;;; Bootstrapping the first few classes
@@ -275,37 +273,35 @@
                         (message-name (held-methods holder-symbol)))
                       (reverse (lineage first-candidate))))))
 
-(def fresh-message
-     "Construct the message corresponding to the
+(def fresh-active-message
+     (fn [target name args]
+       "Construct the message corresponding to the
       attempt to send the particular `name` to the
       `target` with the given `args`. If there is no
       matching method, the message becomes one that
       sends `:method-missing` to the target."
-     (fn [target name args]
-       (let [tentative (assoc message
-                             :name name 
-                             :holder-name (find-containing-holder-symbol (:__left_symbol__ target) name)
-                             :args args
-                             :target target)]
-         (if (:holder-name tentative)
-           tentative
-           (fresh-message target
-                          :method-missing
-                          (vector name args))))))
+       (let [holder-name (find-containing-holder-symbol (:__left_symbol__ target)
+                                                        name)]
+             (if holder-name
+               {:name name, :holder-name holder-name, :args args, :target target}
+               (fresh-active-message target
+                                     :method-missing
+                                     (vector name args))))))
 
-(def message-above
+
+(def using-method-above
      "Use this with a message that has already been created 
       needs to be re-sent to a method in `:up` from the
       method holder used last. If there is no method in the
       lineage above that method holder, an error is thrown."
-     (fn [message]
-       (let [holder-name (find-containing-holder-symbol
-                          (method-holder-symbol-above (:holder-name message))
-                          (:name message))]
+     (fn [active-message]
+       (let [symbol-above (method-holder-symbol-above (:holder-name active-message))
+             holder-name (find-containing-holder-symbol symbol-above
+                                                        (:name active-message))]
          (if holder-name
-           (assoc message :holder-name holder-name)
-           (throw (Error. (str "No superclass method `" (:name message)
-                           "` above `" (:holder-name message)
+           (assoc active-message :holder-name holder-name)
+           (throw (Error. (str "No superclass method `" (:name active-message)
+                           "` above `" (:holder-name active-message)
                            "`.")))))))
 
 ;; Activating messages
@@ -313,17 +309,17 @@
 (def method-to-run
      "Convert the holder and message names in the `message` (both symbols)
       to a function value to apply."
-     (fn [message]
-       (get (held-methods (:holder-name message)) (:name message))))
+     (fn [active-message]
+       (get (held-methods (:holder-name active-message))
+            (:name active-message))))
 
-(def activate
-     "Cause the message to execute, making the `this` and `message` values
-      available to it."
-     (fn [message]
-       (binding [message message
-                 this (:target message)]
-         (apply (method-to-run message) (:args message)))))
 
+(def activate-method
+     (fn [active-message]
+       (binding [*active-message* active-message
+                 this (:target active-message)]
+         (apply (method-to-run active-message)
+                (:args active-message)))))
 
 
 ;;; Non-core classes

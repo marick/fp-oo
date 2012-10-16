@@ -1,9 +1,9 @@
 ;;; Exercise 3
 
-(def message-above :ensure-that-the-function-can-no-longer-be-called)
+(def using-message-above :ensure-that-the-function-can-no-longer-be-called)
 
 (send-to Klass :new
-         'Message 'Anything
+         'ActiveMessage 'Anything
          {
           :add-instance-values
           (fn [& key-value-pairs]
@@ -14,11 +14,11 @@
           :args        (fn [] (:args this))
           :target      (fn [] (:target this))
 
-          :move-up    ;; <<======
+          :move-up                                      ;; <<======
           (fn []
-            (let [holder-name (find-containing-holder-symbol
-                               (method-holder-symbol-above (:holder-name this))
-                               (:name this))]
+            (let [symbol-above (method-holder-symbol-above (:holder-name this))
+                  holder-name (find-containing-holder-symbol symbol-above
+                                                             (:name this))]
               (if holder-name
                 (assoc this :holder-name holder-name)
                 (throw (Error. (str "No superclass method `" (:name this)
@@ -29,12 +29,11 @@
                             
 (def repeat-to-super
      (fn []
-       (activate (send-to message :move-up))))
+       (activate-method (send-to *active-message* :move-up))))
        
 (def send-super
      (fn [& args]
-       (def mss message)
-       (activate (assoc (send-to message :move-up)
-                        :args args))))
+       (activate-method (assoc (send-to *active-message* :move-up)
+                               :args args))))
 
 
