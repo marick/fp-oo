@@ -1,17 +1,14 @@
-(use '[clojure.string :only [split]])
-
-;;; Reversed-digits shows two Clojure features that are outside the
+;;; Reversed-digits shows one Clojure feature that is outside the
 ;;; scope of this book:
 ;;;
-;;; 1. Clojure has regular expressions, which are written like this: #"string".
-;;; 2. Java interoperability allows you to call Java methods---both instance
-;;;    methods and class methods. `Integer/parseInt` refers to a class method.
+;;; 1. Java interoperability allows you to call Java methods---both instance
+;;;    methods and class methods. `Integer.` refers to the Integer constructor.
 
 (def reversed-digits
      (fn [string]
-       (reverse
-        (map (fn [digit-string] (Integer/parseInt digit-string))
-             (rest (split string #""))))))
+       (map (fn [digit-char]
+              (-> digit-char str Integer.))
+            (reverse string))))
 
 ;; (isbn? "0131774115")
 ;; (isbn? "0977716614")
