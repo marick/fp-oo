@@ -6,7 +6,7 @@
      (filter (fn [string]
                (or (.startsWith string "y")
                    (.startsWith string "n")))
-             (repeatedly prompt-and-read)))
+             (repeatedly read-line)))
 
 ;;; 3
 
@@ -15,7 +15,7 @@
        (let [numbers-only
              (map to-integer
                   (filter number-string?
-                          (repeatedly prompt-and-read)))
+                          (repeatedly read-line)))
              number-count (first numbers-only)
              numbers (take number-count (rest numbers-only))]
          (apply + numbers))))

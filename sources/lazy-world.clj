@@ -1,11 +1,3 @@
-(def prompt-and-read
-     (fn []
-       (print "> ")
-       (.flush *out*)
-       (.readLine
-        (new java.io.BufferedReader *in*))))
-
-
 ;;; For exercise 3
 
 (def counted-sum
