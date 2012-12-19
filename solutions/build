@@ -1,4 +1,5 @@
 cat pieces/add-and-make* > add-and-make.clj
+cat pieces/triangle*.clj* > triangle.clj
 cat pieces/class-?.clj > class.clj
 cat pieces/recursion-*.clj > recursion.clj
 cat pieces/without-klass-?.clj > without-klass.clj

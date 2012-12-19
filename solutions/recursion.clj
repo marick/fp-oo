@@ -77,7 +77,7 @@
 ; I can't help you pat yourself on the back.
 (reduce * 1 [1 2 3 4])
 24
-(reduce (fn [so-far val] (assoc so-far val 0))
+(reduce (fn [so-far val] (assoc so-far val (count so-far)))
         {}
         [:a :b :c])
 {:c 0, :b 0, :a 0}
