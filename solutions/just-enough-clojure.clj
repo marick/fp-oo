@@ -125,7 +125,7 @@
 ;; Translated into English, that result says that a list was seen
 ;; where something that could behave as a function was expected.
 ;;
-;; The substitution rule tells us explains it. The first substitution leads to this:
+;; The substitution rule explains it. The first substitution leads to this:
 ;;
 ;;   (  (fn [list] (list list)) (1 2 3)  )
 ;; (The symbol `puzzle` is replaced by a function, and the quoted list is replaced
