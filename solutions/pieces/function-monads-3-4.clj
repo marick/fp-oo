@@ -44,7 +44,11 @@
          {:state (transformer state), :result state})))
 
 (def transform-state-example
-     (domonad [b (transform-state inc)]
-         b))
-
+  (with-monad state-monad
+    (domonad [original-state      (get-state)
+              result-of-transform (transform-state inc)
+              new-state           (get-state)]
+      [original-state result-of-transform new-state])))
+        
 (prn (transform-state-example 1))
+

@@ -6,7 +6,7 @@
 
 (fact (run-and-charge-and-speak 3) => {:charge 4, :result 104})
 
-(fact (transform-state-example 1) => {:state 2, :result 1})
+(fact (transform-state-example 1) => {:state 2, :result [1 1 2]})
 
 (load-file "solutions/pieces/function-monads-5.clj")
 
