@@ -2,13 +2,22 @@
 
 (def second (fn [vec] (first (rest vec))))
 
+(def second
+  (fn [list]
+    (nth list 2)
+  )
+)
 
 ;;; Exercise 2:
 (def third (fn [vec] (first (rest (rest vec)))))
 
 (def third (fn [vec] (second (rest vec))))
 
-
+(def third
+  (fn [list]
+    (nth list 3)
+  ) 
+)
 ;;; Exercise 3:
 
 (def add-squares
