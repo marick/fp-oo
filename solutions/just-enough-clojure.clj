@@ -12,7 +12,7 @@
 ;;; Exercise 3:
 
 (def add-squares
-     (fn [& numbers]
+     (fn [numbers]
        (apply + (map * numbers numbers))))
 
 ;;; Exercise 4:
